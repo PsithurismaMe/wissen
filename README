@@ -1,0 +1,28 @@
+The Following files are part of Wissen
++ Conjugation.csv
++ MasterKey.csv
++ ui.cpp
++ README
+
+
+Wissen is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+Wissen is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+
+Compilation Instructions:
+-----------------------------------------------
+Dependencies:
+	+ A C++ compiler
+	+ NCURSES with support for wide characters
+	+ Fonts which can render the following correctly: ä, ö, ü, ß
+
+To install all dependencies in one command:
+(These assume you already have the correct fonts)
+	Arch Based:
+		pacman -S ncurses gcc
+
+	Debian Based:
+		apt install libncurses-dev g++
+	
+	

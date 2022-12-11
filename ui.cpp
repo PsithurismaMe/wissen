@@ -1,0 +1,1131 @@
+/*
+    Wissen is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+    This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+*/
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <array>
+#include <cstdlib>
+#include <cmath>
+#include <cctype>
+#include <ctime>
+#include <chrono>
+#include <clocale>
+#include <locale>
+#include <codecvt>
+#include <string>
+#include <ncurses.h>
+#include <thread>
+
+int NumOfquestions{4};
+size_t refreshRate{16666};
+
+// RGB array
+int rgbHighlighted[] = {10, 13, 11, 12, 13, 3};
+int rgb[] = {4, 16, 5, 15, 16, 1};
+
+// Needed to getline wchar_t correctly
+std::wstring widen(const std::string &utf8_string)
+{
+    std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> convert;
+    return convert.from_bytes(utf8_string);
+}
+
+// Used for debugging
+namespace debug
+{
+    int emptyInts[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+}
+
+// A struct for storing a word regardless of language
+struct word
+{
+    std::wstring German;
+    std::wstring English;
+    word(std::wstring _e, std::wstring _deutsch)
+    {
+        German = _deutsch;
+        English = _e;
+    }
+};
+
+// I dont know why i cant put this in the conjucation namespace without compiler errors
+// Remember to free this after use
+wchar_t *convertToWideStr(wchar_t letter)
+{
+    wchar_t *thingToReturn = (wchar_t *)std::malloc(2 * sizeof(wchar_t));
+    thingToReturn[0] = letter;
+    thingToReturn[1] = '\0';
+    return thingToReturn;
+}
+
+// A function which returns a vector of unique numbers. End number is not included.
+std::vector<signed long int> randomUniqueNum(signed long int start, signed long int end, size_t numberOfEntries)
+{
+    std::vector<signed long int> thingToReturn;
+    while (thingToReturn.size() != numberOfEntries)
+    {
+        while (1)
+        {
+            signed long int i = std::rand() % (1 + end - start) - start;
+            bool isUnique{1};
+            for (auto k : thingToReturn)
+            {
+                if (k == i)
+                {
+                    isUnique = 0;
+                    break;
+                }
+            }
+            if (isUnique)
+            {
+                thingToReturn.push_back(i);
+                break;
+            }
+        }
+    }
+    return thingToReturn;
+}
+
+// All things related to multiple choice questions go here
+namespace multiChoice
+{
+
+    int awnserCache{0};
+    float accuracyCache1{1.00};
+    float accuracyCache2{1.00};
+    // timestamps
+    std::vector<std::chrono::duration<float>> timeStamps;
+
+    // The draw function draws all things on screen. This should only be called when constructing a std::thread
+    void draw(int *living, std::wstring title, std::vector<signed long int> *randoms, int *highlighedIndex, std::vector<word> *contents, int maY, int maX, int *correct, int *total, std::chrono::_V2::steady_clock::time_point *start)
+    {
+        // Set this to 1 to show debug info on questonare
+        int debugMode{0};
+        while (*living == -1)
+        {
+            clear();
+            attron(COLOR_PAIR(2));
+            addwstr(title.c_str());
+            attroff(COLOR_PAIR(2));
+            printw("\n\n\t");
+            for (int i = 0; i < randoms->size(); i++)
+            {
+                if (*highlighedIndex == i)
+                {
+                    attron(COLOR_PAIR(13));
+                    addwstr((*contents)[(*randoms)[i]].German.c_str());
+                    attroff(COLOR_PAIR(13));
+                    printw("\n\t");
+                }
+                else
+                {
+                    attron(COLOR_PAIR(16));
+                    addwstr((*contents)[(*randoms)[i]].German.c_str());
+                    attroff(COLOR_PAIR(16));
+                    printw("\n\t");
+                }
+            }
+            // Compute duration from start here
+            std::chrono::duration<float> elapsedTime = (std::chrono::steady_clock::now() - *start);
+            if (debugMode)
+            {
+                mvprintw(maY - 4, 0, "Value of myInt: %d", debug::emptyInts[1]);
+                mvprintw(maY - 3, 0, "Index of last entry: %d", debug::emptyInts[0]);
+            }
+            mvprintw(maY - 4, 0, "Awnser to previous question: ");
+            addwstr((*contents)[awnserCache].German.c_str());
+            /*
+                // This kept creating bugs
+                if (timeStamps.size() != 0)
+                {
+                    mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[timeStamps.size()-1].count()).c_str());
+                    // Compute standard deviation
+                    float mean {0.0};
+                    float variance {0.0};
+                    float stdDeviation {0.0};
+                    for (auto i : timeStamps)
+                    {
+                        mean = i.count();
+                    }
+                    for (auto i : timeStamps)
+                    {
+                        variance += std::pow((((float) i.count() - mean)), 2);
+                    }
+                    variance = variance / (float) timeStamps.size();
+                    stdDeviation = std::sqrt(variance);
+                    mvprintw(maY - 2, 0, "Standard Deviation: %.3f", stdDeviation);
+
+                }
+            */
+            mvprintw(maY - 1, 0, "%s sec", std::to_string(elapsedTime.count()).c_str());
+
+            // Display accuracy
+            {
+                float accuracy = 100 * ((float)*correct / (float)*total);
+                if (accuracyCache2 < accuracyCache1)
+                {
+                    attron(COLOR_PAIR(4));
+                    mvprintw(maY - 1, maX / 2, "Accuracy: %.2f%%", accuracy);
+                    attroff(COLOR_PAIR(4));
+                }
+                else
+                {
+                    attron(COLOR_PAIR(5));
+                    mvprintw(maY - 1, maX / 2, "Accuracy: %.2f%%", accuracy);
+                    attroff(COLOR_PAIR(5));
+                }
+            }
+
+            refresh();
+            // set frame times here
+            std::this_thread::sleep_for(std::chrono::microseconds(refreshRate));
+        }
+    }
+
+    int individualWordTranslationMultipleChoice(std::vector<word> *contents, std::vector<signed long int> *randoms, std::wstring title, int *correct, int *total)
+    {
+        // Hide user input
+        noecho();
+
+        // Hide the cursor
+        curs_set(0);
+        int maX;
+        int maY;
+        getmaxyx(stdscr, maY, maX);
+        int choice{-1};
+        int highlighedIndex{0};
+        // Record starting time
+        std::chrono::_V2::steady_clock::time_point start = std::chrono::steady_clock::now();
+
+        // start drawing thread
+        std::thread drawing(multiChoice::draw, &choice, title, randoms, &highlighedIndex, contents, maY, maX, correct, total, &start);
+        while (choice == -1)
+        {
+            // Wait for user to press a key
+            int response = getch();
+            switch (response)
+            {
+            case (KEY_UP):
+            {
+                if (highlighedIndex > 0)
+                {
+                    highlighedIndex--;
+                }
+                else
+                {
+                    highlighedIndex = (randoms->size() - 1);
+                }
+                break;
+            }
+            case (KEY_DOWN):
+            {
+                if (highlighedIndex < randoms->size() - 1)
+                {
+                    highlighedIndex++;
+                }
+                else
+                {
+                    highlighedIndex = 0;
+                }
+                break;
+            }
+            case ('q'):
+            {
+                choice = -2;
+                drawing.join();
+                break;
+            }
+            case ('Q'):
+            {
+                choice = -2;
+                drawing.join();
+                break;
+            }
+            case ('\n'):
+            {
+                choice = highlighedIndex;
+                drawing.join();
+                // timeStamps.push_back((std::chrono::steady_clock::now() - start)); // Appears to break user input
+                break;
+            }
+            default:
+                break;
+            }
+        }
+        return choice;
+    }
+    // This function initiates multiple choice quisonare
+    void startRandomChoice(std::vector<word> *masterKey, int questions)
+    {
+        int correct{0};
+        int total{0};
+        char run{1};
+        while (run)
+        {
+            // Generate 4 uniqe random numbers between 0 and 4
+            std::vector<signed long int> randomWordIndexes = randomUniqueNum(0, masterKey->size() - 1, questions);
+            // Pick a random number between 0 and 4
+            int myInt = std::rand() % randomWordIndexes.size();
+            debug::emptyInts[1] = myInt;
+
+            std::wstring title = L"Please translate the following: " + masterKey->at(randomWordIndexes.at(myInt)).English;
+            // Start quizonare and record awnser
+            int userAwnser = multiChoice::individualWordTranslationMultipleChoice(masterKey, &randomWordIndexes, title, &correct, &total);
+            accuracyCache1 = 100 * ((float)correct / (float)total);
+            debug::emptyInts[0] = userAwnser;
+            awnserCache = randomWordIndexes[myInt];
+            // Check if awnser is correct
+            if (userAwnser == myInt)
+            {
+                correct++;
+            }
+            else if (userAwnser == -2)
+            {
+                run = 0;
+            }
+            total++;
+            accuracyCache2 = 100 * ((float)correct / (float)total);
+        }
+    }
+    void readMasterKey(std::vector<word> &target)
+    {
+
+        std::ifstream file("MasterKey.csv", std::ios::in);
+        if (!file.is_open())
+        {
+            std::cerr << "Failed to read file." << std::endl;
+            return;
+        }
+        while (!file.eof())
+        {
+            std::string entireLineContents;
+            std::getline(file, entireLineContents);
+            // Now convert the entire file into a wchar_t string
+            std::wstring wideEntireLineContents = widen(entireLineContents);
+            // Lastly, parse the line
+            size_t i{0};
+            {
+                std::array<std::wstring, 2> buffers;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[0] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[1] += wideEntireLineContents[i];
+                    i++;
+                }
+                target.push_back(word(buffers[1], buffers[0]));
+            }
+        }
+        file.close();
+    }
+
+}
+
+// Namespace for verb conjugation
+namespace conjucation
+{
+    void printWideWithAttribute(int &indicator, int index, int colorpairOn, int colorpairOff, std::array<std::wstring, 6> &inputBuffers)
+    {
+        if (indicator == index)
+        {
+            attron(COLOR_PAIR(colorpairOn));
+            addwstr(inputBuffers[index].c_str());
+            attroff(COLOR_PAIR(colorpairOn));
+            printw("\n");
+        }
+        else
+        {
+            attron(COLOR_PAIR(colorpairOff));
+            addwstr(inputBuffers[index].c_str());
+            attroff(COLOR_PAIR(colorpairOff));
+            printw("\n");
+        }
+    }
+
+    struct verb
+    {
+        std::wstring infinitive;
+        std::wstring translation;
+        // Begin conjucations
+        // Assume verbs are in present tense
+        std::wstring firstPersonSingular;
+        std::wstring secondPersonSingular;
+        std::wstring thirdPersonSingular;
+        std::wstring firstPersonPlurl;
+        std::wstring secondPersonPlurl;
+        std::wstring thirdPersonPlurl;
+        verb(std::wstring &_translation, std::wstring &_infinitive, std::wstring &_1Person1, std::wstring &_2Person1, std::wstring &_3Person1, std::wstring &_1Person2, std::wstring &_2Person2, std::wstring &_3Person2)
+        {
+            translation = _translation;
+            infinitive = _infinitive;
+            firstPersonSingular = _1Person1;
+            secondPersonSingular = _2Person1;
+            thirdPersonSingular = _3Person1;
+            firstPersonPlurl = _1Person2;
+            secondPersonPlurl = _2Person2;
+            thirdPersonPlurl = _3Person2;
+        }
+    };
+    //  read files
+    void readData(std::vector<verb> &subject)
+    {
+        std::ifstream file("Conjugation.csv", std::ios::in);
+        if (!file.is_open())
+        {
+            std::cerr << "Failed to read file." << std::endl;
+            return;
+        }
+        while (!file.eof())
+        {
+            std::string entireLineContents;
+            std::getline(file, entireLineContents);
+            // Now convert the entire file into a wchar_t string
+            std::wstring wideEntireLineContents = widen(entireLineContents);
+            // Lastly, parse the line
+            size_t i{0};
+            {
+                std::array<std::wstring, 8> buffers;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[0] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[1] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[2] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[3] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[4] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[5] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (wideEntireLineContents[i] != L',')
+                {
+                    buffers[6] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                while (i != wideEntireLineContents.length())
+                {
+                    buffers[7] += wideEntireLineContents[i];
+                    i++;
+                }
+                i++;
+                subject.push_back(verb(buffers[0], buffers[1], buffers[2], buffers[3], buffers[4], buffers[5], buffers[6], buffers[7]));
+            }
+        }
+        file.close();
+    }
+    // primary function
+    void start(std::vector<verb> &key)
+    {
+        int correct{0};
+        int total{0};
+        char run{1};
+        noecho();
+        curs_set(0);
+        while (run)
+        {
+            char drawing{1};
+            int activeIndex{0};
+            int randomInfinitive = std::rand() % key.size();
+            std::array<std::wstring, 6> inputBuffers;
+            while (drawing)
+            {
+                clear();
+                int x;
+                int y;
+                getmaxyx(stdscr, y, x);
+                printw("Verb: ");
+                addwstr(key.at(randomInfinitive).infinitive.c_str());
+                printw("\nTranslation: ");
+                addwstr(key.at(randomInfinitive).translation.c_str());
+                printw("\nAwnsers cannot contain caps. Press + to access special characters");
+                printw("\n\n\n");
+                printWideWithAttribute(activeIndex, 0, 13, 16, inputBuffers);
+                printWideWithAttribute(activeIndex, 1, 13, 16, inputBuffers);
+                printWideWithAttribute(activeIndex, 2, 13, 16, inputBuffers);
+                printWideWithAttribute(activeIndex, 3, 13, 16, inputBuffers);
+                printWideWithAttribute(activeIndex, 4, 13, 16, inputBuffers);
+                printWideWithAttribute(activeIndex, 5, 13, 16, inputBuffers);
+                mvprintw(y - 1, 0, "Press - to submit for grading");
+                refresh();
+                int response = getch();
+                switch (response)
+                {
+                case (KEY_UP):
+                {
+                    if (activeIndex < 1)
+                    {
+                        activeIndex = 5;
+                    }
+                    else
+                    {
+                        activeIndex--;
+                    }
+                }
+                break;
+                case (KEY_DOWN):
+                {
+                    if (activeIndex > 4)
+                    {
+                        activeIndex = 0;
+                    }
+                    else
+                    {
+                        activeIndex++;
+                    }
+                }
+                break;
+                case ('\n'):
+                {
+                    if (activeIndex > 4)
+                    {
+                        activeIndex = 0;
+                    }
+                    else
+                    {
+                        activeIndex++;
+                    }
+                }
+                break;
+                case (KEY_BACKSPACE):
+                {
+                    if (inputBuffers[activeIndex].size() > 0)
+                    {
+                        inputBuffers[activeIndex].pop_back();
+                    }
+                }
+                break;
+                case ('+'):
+                {
+                    char hasResponded{0};
+                    int selected{0};
+                    std::array<std::wstring, 7> choices;
+                    choices[0] = L"ä";
+                    choices[1] = L"ö";
+                    choices[2] = L"ü";
+                    choices[3] = L"ß";
+                    choices[4] = L"Ä";
+                    choices[5] = L"Ö";
+                    choices[6] = L"Ü";
+                    while (!hasResponded)
+                    {
+                        clear();
+                        mvprintw(2, 0, "Choose using LEFT/RIGHT/ENTER:\t");
+                        for (int k = 0; k < 7; k++)
+                        {
+                            if (k == selected)
+                            {
+                                attron(COLOR_PAIR(12));
+                                addwstr(choices[k].c_str());
+                                attroff(COLOR_PAIR(12));
+                                printw("  ");
+                            }
+                            else
+                            {
+                                attron(COLOR_PAIR(15));
+                                addwstr(choices[k].c_str());
+                                attroff(COLOR_PAIR(15));
+                                printw("  ");
+                            }
+                        }
+                        refresh();
+                        int suss = getch();
+                        switch (suss)
+                        {
+                        case (KEY_RIGHT):
+                        {
+                            if (selected < 6)
+                            {
+                                selected++;
+                            }
+                            else
+                            {
+                                selected = 0;
+                            }
+                        }
+                        break;
+                        case (KEY_LEFT):
+                        {
+                            if (selected > 0)
+                            {
+                                selected--;
+                            }
+                            else
+                            {
+                                selected = 6;
+                            }
+                        }
+                        break;
+                        case ('\n'):
+                        {
+                            hasResponded = 1;
+                            inputBuffers[activeIndex] += choices[selected];
+                        }
+                        break;
+                        case ('q'):
+                        {
+                            hasResponded = 1;
+                        }
+                        break;
+                        default:
+                            break;
+                        }
+                    }
+                }
+                break;
+                case ('-'):
+                {
+                    std::vector<std::string> corrections;
+                    // firstPersonSingular
+                    {
+                        std::string accuracy;
+                        int i{0};
+                        for (auto k : key.at(randomInfinitive).firstPersonSingular)
+                        {
+                            if ((i <= key.at(randomInfinitive).firstPersonSingular.length() && i <= inputBuffers[0].length()))
+                            {
+                                if (k == inputBuffers[0][i])
+                                {
+                                    accuracy += '1';
+                                }
+                                else
+                                {
+                                    accuracy += '0';
+                                }
+                            }
+                            i++;
+                        }
+                        corrections.push_back(accuracy);
+                    }
+                    {
+                        std::string accuracy;
+                        int i{0};
+                        for (auto k : key.at(randomInfinitive).secondPersonSingular)
+                        {
+                            if ((i <= key.at(randomInfinitive).secondPersonSingular.length() && i <= inputBuffers[1].length()))
+                            {
+                                if (k == inputBuffers[1][i])
+                                {
+                                    accuracy += '1';
+                                }
+                                else
+                                {
+                                    accuracy += '0';
+                                }
+                            }
+                            i++;
+                        }
+                        corrections.push_back(accuracy);
+                    }
+                    {
+                        std::string accuracy;
+                        int i{0};
+                        for (auto k : key.at(randomInfinitive).thirdPersonSingular)
+                        {
+                            if ((i <= key.at(randomInfinitive).thirdPersonSingular.length() && i <= inputBuffers[2].length()))
+                            {
+                                if (k == inputBuffers[2][i])
+                                {
+                                    accuracy += '1';
+                                }
+                                else
+                                {
+                                    accuracy += '0';
+                                }
+                            }
+                            i++;
+                        }
+                        corrections.push_back(accuracy);
+                    }
+                    {
+                        std::string accuracy;
+                        int i{0};
+                        for (auto k : key.at(randomInfinitive).firstPersonPlurl)
+                        {
+                            if ((i <= key.at(randomInfinitive).firstPersonPlurl.length() && i <= inputBuffers[3].length()))
+                            {
+                                if (k == inputBuffers[3][i])
+                                {
+                                    accuracy += '1';
+                                }
+                                else
+                                {
+                                    accuracy += '0';
+                                }
+                            }
+                            i++;
+                        }
+                        corrections.push_back(accuracy);
+                    }
+                    {
+                        std::string accuracy;
+                        int i{0};
+                        for (auto k : key.at(randomInfinitive).secondPersonPlurl)
+                        {
+                            if ((i <= key.at(randomInfinitive).secondPersonPlurl.length() && i <= inputBuffers[4].length()))
+                            {
+                                if (k == inputBuffers[4][i])
+                                {
+                                    accuracy += '1';
+                                }
+                                else
+                                {
+                                    accuracy += '0';
+                                }
+                            }
+                            i++;
+                        }
+                        corrections.push_back(accuracy);
+                    }
+                    {
+                        std::string accuracy;
+                        int i{0};
+                        for (auto k : key.at(randomInfinitive).thirdPersonPlurl)
+                        {
+                            if ((i <= key.at(randomInfinitive).thirdPersonPlurl.length() && i <= inputBuffers[5].length()))
+                            {
+                                if (k == inputBuffers[5][i])
+                                {
+                                    accuracy += '1';
+                                }
+                                else
+                                {
+                                    accuracy += '0';
+                                }
+                            }
+                            i++;
+                        }
+                        corrections.push_back(accuracy);
+                    }
+                    // Print corrections
+                    char stop{0};
+                    while (!stop)
+                    {
+                        clear();
+                        printw("Verb: ");
+                        addwstr(key.at(randomInfinitive).infinitive.c_str());
+                        printw("\nTranslation: ");
+                        addwstr(key.at(randomInfinitive).translation.c_str());
+                        printw("\n\n\n");
+                        {
+                            size_t i{0};
+                            for (wchar_t k : key.at(randomInfinitive).firstPersonSingular)
+                            {
+                                wchar_t *freeMe = convertToWideStr(k);
+                                if ((i <= corrections[0].size()))
+                                {
+                                    if (corrections[0][i] == '1')
+                                    {
+                                        attron(COLOR_PAIR(11));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(11));
+                                    }
+                                    else
+                                    {
+                                        attron(COLOR_PAIR(10));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(10));
+                                    }
+                                }
+                                else
+                                {
+                                    attron(COLOR_PAIR(10));
+                                    addwstr(freeMe);
+                                    attroff(COLOR_PAIR(10));
+                                }
+                                i++;
+                                std::free((void *)freeMe);
+                            }
+                        }
+                        addch('\n');
+                        {
+                            size_t i{0};
+                            for (wchar_t k : key.at(randomInfinitive).secondPersonSingular)
+                            {
+                                wchar_t *freeMe = convertToWideStr(k);
+                                if ((i <= corrections[1].size()))
+                                {
+                                    if (corrections[1][i] == '1')
+                                    {
+                                        attron(COLOR_PAIR(11));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(11));
+                                    }
+                                    else
+                                    {
+                                        attron(COLOR_PAIR(10));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(10));
+                                    }
+                                }
+                                else
+                                {
+                                    attron(COLOR_PAIR(10));
+                                    addwstr(freeMe);
+                                    attroff(COLOR_PAIR(10));
+                                }
+                                i++;
+                                std::free((void *)freeMe);
+                            }
+                        }
+                        addch('\n');
+                        {
+                            size_t i{0};
+                            for (wchar_t k : key.at(randomInfinitive).thirdPersonSingular)
+                            {
+                                wchar_t *freeMe = convertToWideStr(k);
+                                if ((i <= corrections[2].size()))
+                                {
+                                    if (corrections[2][i] == '1')
+                                    {
+                                        attron(COLOR_PAIR(11));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(11));
+                                    }
+                                    else
+                                    {
+                                        attron(COLOR_PAIR(10));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(10));
+                                    }
+                                }
+                                else
+                                {
+                                    attron(COLOR_PAIR(10));
+                                    addwstr(freeMe);
+                                    attroff(COLOR_PAIR(10));
+                                }
+                                i++;
+                                std::free((void *)freeMe);
+                            }
+                        }
+                        addch('\n');
+                        {
+                            size_t i{0};
+                            for (wchar_t k : key.at(randomInfinitive).firstPersonPlurl)
+                            {
+                                wchar_t *freeMe = convertToWideStr(k);
+                                if ((i <= corrections[3].size()))
+                                {
+                                    if (corrections[3][i] == '1')
+                                    {
+                                        attron(COLOR_PAIR(11));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(11));
+                                    }
+                                    else
+                                    {
+                                        attron(COLOR_PAIR(10));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(10));
+                                    }
+                                }
+                                else
+                                {
+                                    attron(COLOR_PAIR(10));
+                                    addwstr(freeMe);
+                                    attroff(COLOR_PAIR(10));
+                                }
+                                i++;
+                                std::free(freeMe);
+                            }
+                        }
+                        addch('\n');
+                        {
+                            size_t i{0};
+                            for (wchar_t k : key.at(randomInfinitive).secondPersonPlurl)
+                            {
+                                wchar_t *freeMe = convertToWideStr(k);
+                                if ((i <= corrections[4].size()))
+                                {
+                                    if (corrections[4][i] == '1')
+                                    {
+                                        attron(COLOR_PAIR(11));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(11));
+                                    }
+                                    else
+                                    {
+                                        attron(COLOR_PAIR(10));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(10));
+                                    }
+                                }
+                                else
+                                {
+                                    attron(COLOR_PAIR(10));
+                                    addwstr(freeMe);
+                                    attroff(COLOR_PAIR(10));
+                                }
+                                i++;
+                                std::free((void *)freeMe);
+                            }
+                        }
+                        addch('\n');
+                        {
+                            size_t i{0};
+                            for (wchar_t k : key.at(randomInfinitive).thirdPersonPlurl)
+                            {
+                                wchar_t *freeMe = convertToWideStr(k);
+                                if ((i <= corrections[5].size()))
+                                {
+                                    if (corrections[5][i] == '1')
+                                    {
+                                        attron(COLOR_PAIR(11));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(11));
+                                    }
+                                    else
+                                    {
+                                        attron(COLOR_PAIR(10));
+                                        addwstr(freeMe);
+                                        attroff(COLOR_PAIR(10));
+                                    }
+                                }
+                                else
+                                {
+                                    attron(COLOR_PAIR(10));
+                                    addwstr(freeMe);
+                                    attroff(COLOR_PAIR(10));
+                                }
+                                i++;
+                                std::free((void *)freeMe);
+                            }
+                        }
+                        int num{0};
+                        int questionTotal{0};
+                        for (std::string g : corrections)
+                        {
+                            for (char h : g)
+                            {
+                                questionTotal++;
+                                if (h == '1')
+                                {
+                                    num++;
+                                }
+                            }
+                        }
+                        mvprintw(y - 2, 0, "Score: %.2f%%", ((float)num / (float)questionTotal) * 100);
+                        mvprintw(y - 1, 0, "Press q to exit");
+                        refresh();
+                        int u = getch();
+                        if (u == 'q' || u == 'Q')
+                        {
+                            stop = 1;
+                            break;
+                        }
+                    }
+                }
+                    drawing = 0;
+                    break;
+                case ('`'):
+                    drawing = 0;
+                    run = 0;
+                    break;
+                default:
+                {
+                    if (response > 91 && response < 123)
+                    {
+                        inputBuffers[activeIndex] += response;
+                    }
+                }
+                break;
+                }
+            }
+        }
+    }
+}
+
+// Unimplemented
+namespace sentenceTranslation
+{
+
+}
+namespace titleScreen
+{
+    int pos{0};
+    char quitProgram{0};
+    void start()
+    {
+        std::array<std::string, 2> title;
+        std::array<std::string, 3> choices;
+        title[0] = "German";
+        title[1] = "Quizzer";
+        choices[0] = "Multiple Choice Word Translation";
+        choices[1] = "Verb Conjugation";
+        choices[2] = "Exit";
+        std::string license = "German Quizzer is licensed under the GPL-v3. See LICENSE file for more details.";
+
+
+        while (!quitProgram)
+        {
+            clear();
+            int x;
+            int y;
+            getmaxyx(stdscr, y, x);
+            mvprintw(1, ((x / 2) - (title[0].length() / 2)), "%s", title[0].c_str());
+            mvprintw(2, ((x / 2) - (title[1].length() / 2)), "%s\n\n\n", title[1].c_str());
+
+            for (int i = 0; i < choices.size(); i++)
+            {
+                if (pos == i)
+                {
+                    attron(A_REVERSE);
+                    mvprintw(5 + i, ((x / 2) - (choices[i].length() / 2)), "%s", choices[i].c_str());
+                    attroff(A_REVERSE);
+                }
+                else
+                {
+                    mvprintw(5 + i, ((x / 2) - (choices[i].length() / 2)), "%s", choices[i].c_str());
+                }
+            }
+            mvprintw(y - 1, ((x / 2) - (license.length() / 2)), "%s", license.c_str());
+            refresh();
+            int response = getch();
+            switch (response)
+            {
+            case (KEY_UP):
+                if (pos == 0)
+                {
+                    pos = choices.size() - 1;
+                }
+                else
+                {
+                    pos--;
+                }
+                break;
+            case (KEY_DOWN):
+                if (pos == choices.size() - 1)
+                {
+                    pos = 0;
+                }
+                else
+                {
+                    pos++;
+                }
+                break;
+            case ('\n'):
+            {
+                switch (pos)
+                {
+                case (0):
+                {
+                    std::vector<word> masterKey;
+                    multiChoice::readMasterKey(masterKey);
+                    multiChoice::startRandomChoice(&masterKey, NumOfquestions);
+                }
+                break;
+                case (1):
+                {
+                    std::vector<conjucation::verb> verbs;
+                    conjucation::readData(verbs);
+                    conjucation::start(verbs);
+                }
+                break;
+                case (2):
+                {
+                    quitProgram = 1;
+                }
+                break;
+                default:
+                    break;
+                }
+            }
+            break;
+            default:
+                break;
+            }
+        }
+    }
+}
+int main(int argc, char **argv)
+{
+    if (argc > 1 && !std::isdigit(*argv[1]))
+    {
+        std::cout << "Ultimate Quizzer- A tool to help learn German written in C++" << std::endl;
+        std::cout << "Command syntax:\n\ta.out <refresh rate> <number of multiple choice questions>\n\nAll arguments are optional" << std::endl;
+        return 0;
+    }
+    if (argc > 1 && std::isdigit(*argv[1]))
+    {
+        double placeholder = 1.0 / ((double)std::atoi(argv[1]));
+        refreshRate = 1000000 * placeholder;
+        if (argc > 2 && std::isdigit(*argv[2]))
+        {
+            NumOfquestions = std::atoi(argv[2]);
+        }
+    }
+    // Seed random number generator
+    std::srand(std::time(0));
+    // Needed for essets to be printed correctly
+    setlocale(LC_ALL, "");
+    std::setlocale(LC_ALL, nullptr);
+
+    // Initialize ncurses
+    initscr();
+
+    // Give ncurses more control over keypresses
+    keypad(stdscr, TRUE);
+
+    // Disable CTRL-C to kill
+    cbreak();
+
+    // Check if terminal supports colors
+    if (has_colors() == FALSE)
+    {
+        endwin();
+        std::cerr << "Terminal does not support color. Exiting" << std::endl;
+        return -1;
+    }
+
+    // Define color pairs
+    start_color();
+    init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Unselected option
+    init_pair(2, COLOR_CYAN, COLOR_BLACK);   // UI Color
+    init_pair(3, COLOR_BLACK, COLOR_YELLOW); // Selected option
+    init_pair(4, COLOR_RED, COLOR_BLACK);    // Bad
+    init_pair(5, COLOR_GREEN, COLOR_BLACK);  // Good
+    // RGB color pairs
+    init_pair(10, COLOR_BLACK, COLOR_RED);     // Red highlighted
+    init_pair(11, COLOR_BLACK, COLOR_GREEN);   // Green highlighted
+    init_pair(12, COLOR_BLACK, COLOR_BLUE);    // Blue highlighted
+    init_pair(13, COLOR_BLACK, COLOR_MAGENTA); // Magenta highlighted
+    init_pair(14, COLOR_BLACK, COLOR_WHITE);   // Monochrome highlighted
+    init_pair(15, COLOR_BLUE, COLOR_BLACK);    // Blue not highlighted
+    init_pair(16, COLOR_MAGENTA, COLOR_BLACK); // Magenta not highlighted
+    init_pair(17, COLOR_WHITE, COLOR_BLACK);
+    titleScreen::start();
+    endwin();
+    return 0;
+}
