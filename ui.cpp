@@ -985,7 +985,7 @@ namespace titleScreen
         choices[0] = "Multiple Choice Word Translation";
         choices[1] = "Verb Conjugation";
         choices[2] = "Exit";
-        std::string license = "German Quizzer is licensed under the GPL-v3. See LICENSE file for more details.";
+        std::string license = "Wissen is licensed under the GPL-v3. See LICENSE file for more details.";
 
 
         while (!quitProgram)
