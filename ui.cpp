@@ -355,22 +355,17 @@ namespace conjucation
         std::wstring translation;
         // Begin conjucations
         // Assume verbs are in present tense
-        std::wstring firstPersonSingular;
-        std::wstring secondPersonSingular;
-        std::wstring thirdPersonSingular;
-        std::wstring firstPersonPlurl;
-        std::wstring secondPersonPlurl;
-        std::wstring thirdPersonPlurl;
+        std::array<std::wstring, 6> conjucations;
         verb(std::wstring &_translation, std::wstring &_infinitive, std::wstring &_1Person1, std::wstring &_2Person1, std::wstring &_3Person1, std::wstring &_1Person2, std::wstring &_2Person2, std::wstring &_3Person2)
         {
             translation = _translation;
             infinitive = _infinitive;
-            firstPersonSingular = _1Person1;
-            secondPersonSingular = _2Person1;
-            thirdPersonSingular = _3Person1;
-            firstPersonPlurl = _1Person2;
-            secondPersonPlurl = _2Person2;
-            thirdPersonPlurl = _3Person2;
+            conjucations.at(0) = _1Person1;
+            conjucations.at(1) = _2Person1;
+            conjucations.at(2) = _3Person1;
+            conjucations.at(3) = _1Person2;
+            conjucations.at(4) = _2Person2;
+            conjucations.at(5) = _3Person2;
         }
     };
     //  read files
@@ -606,16 +601,18 @@ namespace conjucation
                 break;
                 case ('-'):
                 {
+                    
                     std::vector<std::string> corrections;
-                    // firstPersonSingular
+                    // conjucations.at(0)
+                    for (int x = 0; x < 6; x++)
                     {
                         std::string accuracy;
                         int i{0};
-                        for (auto k : key.at(randomInfinitive).firstPersonSingular)
+                        for (auto k : key.at(randomInfinitive).conjucations.at(x))
                         {
-                            if ((i <= key.at(randomInfinitive).firstPersonSingular.length() && i <= inputBuffers[0].length()))
+                            if ((i <= key.at(randomInfinitive).conjucations.at(x).length() && i <= inputBuffers[x].length()))
                             {
-                                if (k == inputBuffers[0][i])
+                                if (k == inputBuffers[x][i])
                                 {
                                     accuracy += '1';
                                 }
@@ -628,106 +625,7 @@ namespace conjucation
                         }
                         corrections.push_back(accuracy);
                     }
-                    {
-                        std::string accuracy;
-                        int i{0};
-                        for (auto k : key.at(randomInfinitive).secondPersonSingular)
-                        {
-                            if ((i <= key.at(randomInfinitive).secondPersonSingular.length() && i <= inputBuffers[1].length()))
-                            {
-                                if (k == inputBuffers[1][i])
-                                {
-                                    accuracy += '1';
-                                }
-                                else
-                                {
-                                    accuracy += '0';
-                                }
-                            }
-                            i++;
-                        }
-                        corrections.push_back(accuracy);
-                    }
-                    {
-                        std::string accuracy;
-                        int i{0};
-                        for (auto k : key.at(randomInfinitive).thirdPersonSingular)
-                        {
-                            if ((i <= key.at(randomInfinitive).thirdPersonSingular.length() && i <= inputBuffers[2].length()))
-                            {
-                                if (k == inputBuffers[2][i])
-                                {
-                                    accuracy += '1';
-                                }
-                                else
-                                {
-                                    accuracy += '0';
-                                }
-                            }
-                            i++;
-                        }
-                        corrections.push_back(accuracy);
-                    }
-                    {
-                        std::string accuracy;
-                        int i{0};
-                        for (auto k : key.at(randomInfinitive).firstPersonPlurl)
-                        {
-                            if ((i <= key.at(randomInfinitive).firstPersonPlurl.length() && i <= inputBuffers[3].length()))
-                            {
-                                if (k == inputBuffers[3][i])
-                                {
-                                    accuracy += '1';
-                                }
-                                else
-                                {
-                                    accuracy += '0';
-                                }
-                            }
-                            i++;
-                        }
-                        corrections.push_back(accuracy);
-                    }
-                    {
-                        std::string accuracy;
-                        int i{0};
-                        for (auto k : key.at(randomInfinitive).secondPersonPlurl)
-                        {
-                            if ((i <= key.at(randomInfinitive).secondPersonPlurl.length() && i <= inputBuffers[4].length()))
-                            {
-                                if (k == inputBuffers[4][i])
-                                {
-                                    accuracy += '1';
-                                }
-                                else
-                                {
-                                    accuracy += '0';
-                                }
-                            }
-                            i++;
-                        }
-                        corrections.push_back(accuracy);
-                    }
-                    {
-                        std::string accuracy;
-                        int i{0};
-                        for (auto k : key.at(randomInfinitive).thirdPersonPlurl)
-                        {
-                            if ((i <= key.at(randomInfinitive).thirdPersonPlurl.length() && i <= inputBuffers[5].length()))
-                            {
-                                if (k == inputBuffers[5][i])
-                                {
-                                    accuracy += '1';
-                                }
-                                else
-                                {
-                                    accuracy += '0';
-                                }
-                            }
-                            i++;
-                        }
-                        corrections.push_back(accuracy);
-                    }
+                    
                     // Print corrections
                     char stop{0};
                     while (!stop)
@@ -739,17 +637,27 @@ namespace conjucation
                         addwstr(key.at(randomInfinitive).translation.c_str());
                         printw("\n\n\n");
                         {
-                            size_t i{0};
-                            for (wchar_t k : key.at(randomInfinitive).firstPersonSingular)
+                            
+                            for (int x = 0; x < 6; x++)
                             {
-                                wchar_t *freeMe = convertToWideStr(k);
-                                if ((i <= corrections[0].size()))
+                                size_t i{0};
+                                for (wchar_t k : key.at(randomInfinitive).conjucations.at(x))
                                 {
-                                    if (corrections[0][i] == '1')
+                                    wchar_t *freeMe = convertToWideStr(k);
+                                    if ((i <= corrections[x].size()))
                                     {
-                                        attron(COLOR_PAIR(11));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(11));
+                                        if (corrections[x][i] == '1')
+                                        {
+                                            attron(COLOR_PAIR(11));
+                                            addwstr(freeMe);
+                                            attroff(COLOR_PAIR(11));
+                                        }
+                                        else
+                                        {
+                                            attron(COLOR_PAIR(10));
+                                            addwstr(freeMe);
+                                            attroff(COLOR_PAIR(10));
+                                        }
                                     }
                                     else
                                     {
@@ -757,170 +665,11 @@ namespace conjucation
                                         addwstr(freeMe);
                                         attroff(COLOR_PAIR(10));
                                     }
+                                    i++;
+                                    std::free((void *)freeMe);
+                                    
                                 }
-                                else
-                                {
-                                    attron(COLOR_PAIR(10));
-                                    addwstr(freeMe);
-                                    attroff(COLOR_PAIR(10));
-                                }
-                                i++;
-                                std::free((void *)freeMe);
-                            }
-                        }
-                        addch('\n');
-                        {
-                            size_t i{0};
-                            for (wchar_t k : key.at(randomInfinitive).secondPersonSingular)
-                            {
-                                wchar_t *freeMe = convertToWideStr(k);
-                                if ((i <= corrections[1].size()))
-                                {
-                                    if (corrections[1][i] == '1')
-                                    {
-                                        attron(COLOR_PAIR(11));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(11));
-                                    }
-                                    else
-                                    {
-                                        attron(COLOR_PAIR(10));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(10));
-                                    }
-                                }
-                                else
-                                {
-                                    attron(COLOR_PAIR(10));
-                                    addwstr(freeMe);
-                                    attroff(COLOR_PAIR(10));
-                                }
-                                i++;
-                                std::free((void *)freeMe);
-                            }
-                        }
-                        addch('\n');
-                        {
-                            size_t i{0};
-                            for (wchar_t k : key.at(randomInfinitive).thirdPersonSingular)
-                            {
-                                wchar_t *freeMe = convertToWideStr(k);
-                                if ((i <= corrections[2].size()))
-                                {
-                                    if (corrections[2][i] == '1')
-                                    {
-                                        attron(COLOR_PAIR(11));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(11));
-                                    }
-                                    else
-                                    {
-                                        attron(COLOR_PAIR(10));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(10));
-                                    }
-                                }
-                                else
-                                {
-                                    attron(COLOR_PAIR(10));
-                                    addwstr(freeMe);
-                                    attroff(COLOR_PAIR(10));
-                                }
-                                i++;
-                                std::free((void *)freeMe);
-                            }
-                        }
-                        addch('\n');
-                        {
-                            size_t i{0};
-                            for (wchar_t k : key.at(randomInfinitive).firstPersonPlurl)
-                            {
-                                wchar_t *freeMe = convertToWideStr(k);
-                                if ((i <= corrections[3].size()))
-                                {
-                                    if (corrections[3][i] == '1')
-                                    {
-                                        attron(COLOR_PAIR(11));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(11));
-                                    }
-                                    else
-                                    {
-                                        attron(COLOR_PAIR(10));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(10));
-                                    }
-                                }
-                                else
-                                {
-                                    attron(COLOR_PAIR(10));
-                                    addwstr(freeMe);
-                                    attroff(COLOR_PAIR(10));
-                                }
-                                i++;
-                                std::free(freeMe);
-                            }
-                        }
-                        addch('\n');
-                        {
-                            size_t i{0};
-                            for (wchar_t k : key.at(randomInfinitive).secondPersonPlurl)
-                            {
-                                wchar_t *freeMe = convertToWideStr(k);
-                                if ((i <= corrections[4].size()))
-                                {
-                                    if (corrections[4][i] == '1')
-                                    {
-                                        attron(COLOR_PAIR(11));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(11));
-                                    }
-                                    else
-                                    {
-                                        attron(COLOR_PAIR(10));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(10));
-                                    }
-                                }
-                                else
-                                {
-                                    attron(COLOR_PAIR(10));
-                                    addwstr(freeMe);
-                                    attroff(COLOR_PAIR(10));
-                                }
-                                i++;
-                                std::free((void *)freeMe);
-                            }
-                        }
-                        addch('\n');
-                        {
-                            size_t i{0};
-                            for (wchar_t k : key.at(randomInfinitive).thirdPersonPlurl)
-                            {
-                                wchar_t *freeMe = convertToWideStr(k);
-                                if ((i <= corrections[5].size()))
-                                {
-                                    if (corrections[5][i] == '1')
-                                    {
-                                        attron(COLOR_PAIR(11));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(11));
-                                    }
-                                    else
-                                    {
-                                        attron(COLOR_PAIR(10));
-                                        addwstr(freeMe);
-                                        attroff(COLOR_PAIR(10));
-                                    }
-                                }
-                                else
-                                {
-                                    attron(COLOR_PAIR(10));
-                                    addwstr(freeMe);
-                                    attroff(COLOR_PAIR(10));
-                                }
-                                i++;
-                                std::free((void *)freeMe);
+                                addch('\n');
                             }
                         }
                         int num{0};
