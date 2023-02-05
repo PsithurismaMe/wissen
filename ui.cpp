@@ -89,7 +89,6 @@ std::vector<signed long int> randomUniqueNum(signed long int start, signed long 
     return thingToReturn;
 }
 
-// All things related to multiple choice questions go here
 namespace multiChoice
 {
 
@@ -97,8 +96,8 @@ namespace multiChoice
     float accuracyCache1{1.00};
     float accuracyCache2{1.00};
     // timestamps
-    std::vector<std::chrono::duration<float>> timeStamps;
-
+    std::array<std::chrono::duration<float>, 20> timeStamps;
+    std::uint64_t timeStampIterator = 0;
     // The draw function draws all things on screen. This should only be called when constructing a std::thread
     void draw(int *living, std::wstring title, std::vector<signed long int> *randoms, int *highlighedIndex, std::vector<word> *contents, int maY, int maX, int *correct, int *total, std::chrono::_V2::steady_clock::time_point *start)
     {
@@ -137,12 +136,9 @@ namespace multiChoice
             }
             mvprintw(maY - 4, 0, "Awnser to previous question: ");
             addwstr((*contents)[awnserCache].German.c_str());
-            /*
-                // This kept creating bugs
                 if (timeStamps.size() != 0)
                 {
-                    mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[timeStamps.size()-1].count()).c_str());
-                    // Compute standard deviation
+                    mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[((timeStampIterator - 1) % 20)].count()).c_str());
                     float mean {0.0};
                     float variance {0.0};
                     float stdDeviation {0.0};
@@ -159,7 +155,6 @@ namespace multiChoice
                     mvprintw(maY - 2, 0, "Standard Deviation: %.3f", stdDeviation);
 
                 }
-            */
             mvprintw(maY - 1, 0, "%s sec", std::to_string(elapsedTime.count()).c_str());
 
             // Display accuracy
@@ -248,7 +243,8 @@ namespace multiChoice
             {
                 choice = highlighedIndex;
                 drawing.join();
-                // timeStamps.push_back((std::chrono::steady_clock::now() - start)); // Appears to break user input
+                timeStamps.at(timeStampIterator % 20) = ((std::chrono::steady_clock::now() - start)); // Appears to break user input
+                timeStampIterator++;
                 break;
             }
             default:
@@ -306,21 +302,21 @@ namespace multiChoice
             // Now convert the entire file into a wchar_t string
             std::wstring wideEntireLineContents = widen(entireLineContents);
             // Lastly, parse the line
-            size_t i{0};
+            size_t i{1};
             {
                 std::array<std::wstring, 2> buffers;
-                while (wideEntireLineContents[i] != L',')
+                while (wideEntireLineContents.at(i) != L'"')
                 {
-                    buffers[0] += wideEntireLineContents[i];
+                    buffers.at(0) += wideEntireLineContents.at(i);
                     i++;
                 }
-                i++;
-                while (wideEntireLineContents[i] != L',')
+                i += 3;
+                while (wideEntireLineContents.at(i) != L'"')
                 {
-                    buffers[1] += wideEntireLineContents[i];
+                    buffers.at(1) += wideEntireLineContents.at(i);
                     i++;
                 }
-                target.push_back(word(buffers[1], buffers[0]));
+                target.push_back(word(buffers.at(1), buffers.at(0)));
             }
         }
         file.close();
@@ -328,7 +324,6 @@ namespace multiChoice
 
 }
 
-// Namespace for verb conjugation
 namespace conjucation
 {
     void printWideWithAttribute(int &indicator, int index, int colorpairOn, int colorpairOff, std::array<std::wstring, 6> &inputBuffers)
@@ -353,19 +348,25 @@ namespace conjucation
     {
         std::wstring infinitive;
         std::wstring translation;
-        // Begin conjucations
-        // Assume verbs are in present tense
-        std::array<std::wstring, 6> conjucations;
-        verb(std::wstring &_translation, std::wstring &_infinitive, std::wstring &_1Person1, std::wstring &_2Person1, std::wstring &_3Person1, std::wstring &_1Person2, std::wstring &_2Person2, std::wstring &_3Person2)
+        std::array<std::wstring, 6> simplePresentTense;
+        std::array<std::wstring, 6> simplePastTense;
+        std::array<std::wstring, 6> simpleFutureTense;
+        std::array<std::wstring, 6> * getTense(int tense) // 0 == Present, 1 == Past, 2 == Future
         {
-            translation = _translation;
-            infinitive = _infinitive;
-            conjucations.at(0) = _1Person1;
-            conjucations.at(1) = _2Person1;
-            conjucations.at(2) = _3Person1;
-            conjucations.at(3) = _1Person2;
-            conjucations.at(4) = _2Person2;
-            conjucations.at(5) = _3Person2;
+            if (tense == 0)
+            {
+                return &simplePresentTense;
+            }
+            if (tense == 1)
+            {
+                return &simplePastTense;
+            }
+            if (tense == 2)
+            {
+                return &simpleFutureTense;
+            }
+            // This should never happen
+            return &simplePresentTense;
         }
     };
     //  read files
@@ -377,70 +378,55 @@ namespace conjucation
             std::cerr << "Failed to read file." << std::endl;
             return;
         }
+        {
+            // Skip the first line since its just comments
+            std::string dummyBuffer;
+            std::getline(file, dummyBuffer);
+        }
         while (!file.eof())
         {
             std::string entireLineContents;
             std::getline(file, entireLineContents);
-            // Now convert the entire file into a wchar_t string
             std::wstring wideEntireLineContents = widen(entireLineContents);
-            // Lastly, parse the line
-            size_t i{0};
+            size_t i{1};
             {
-                std::array<std::wstring, 8> buffers;
-                while (wideEntireLineContents[i] != L',')
+                std::array<std::wstring, 20> buffers;
+                for (int x = 0; x < buffers.size(); x++)
                 {
-                    buffers[0] += wideEntireLineContents[i];
-                    i++;
+                    while (wideEntireLineContents.at(i) != L'"')
+                    {
+                        buffers.at(x) += wideEntireLineContents.at(i);
+                        i++;
+                    }
+                        i += 3;
+                    
                 }
-                i++;
-                while (wideEntireLineContents[i] != L',')
-                {
-                    buffers[1] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                while (wideEntireLineContents[i] != L',')
-                {
-                    buffers[2] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                while (wideEntireLineContents[i] != L',')
-                {
-                    buffers[3] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                while (wideEntireLineContents[i] != L',')
-                {
-                    buffers[4] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                while (wideEntireLineContents[i] != L',')
-                {
-                    buffers[5] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                while (wideEntireLineContents[i] != L',')
-                {
-                    buffers[6] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                while (i != wideEntireLineContents.length())
-                {
-                    buffers[7] += wideEntireLineContents[i];
-                    i++;
-                }
-                i++;
-                subject.push_back(verb(buffers[0], buffers[1], buffers[2], buffers[3], buffers[4], buffers[5], buffers[6], buffers[7]));
+                subject.push_back(verb());
+                subject.at(subject.size()-1).translation = buffers.at(0);
+                subject.at(subject.size()-1).infinitive = buffers.at(1);
+                subject.at(subject.size()-1).simplePresentTense.at(0) = buffers.at(2);
+                subject.at(subject.size()-1).simplePresentTense.at(1) = buffers.at(3);
+                subject.at(subject.size()-1).simplePresentTense.at(2) = buffers.at(4);
+                subject.at(subject.size()-1).simplePresentTense.at(3) = buffers.at(5);
+                subject.at(subject.size()-1).simplePresentTense.at(4) = buffers.at(6);
+                subject.at(subject.size()-1).simplePresentTense.at(5) = buffers.at(7);
+                subject.at(subject.size()-1).simplePastTense.at(0) = buffers.at(8);
+                subject.at(subject.size()-1).simplePastTense.at(1) = buffers.at(9);
+                subject.at(subject.size()-1).simplePastTense.at(2) = buffers.at(10);
+                subject.at(subject.size()-1).simplePastTense.at(3) = buffers.at(11);
+                subject.at(subject.size()-1).simplePastTense.at(4) = buffers.at(12);
+                subject.at(subject.size()-1).simplePastTense.at(5) = buffers.at(13);
+                subject.at(subject.size()-1).simpleFutureTense.at(0) = buffers.at(14);
+                subject.at(subject.size()-1).simpleFutureTense.at(1) = buffers.at(15);
+                subject.at(subject.size()-1).simpleFutureTense.at(2) = buffers.at(16);
+                subject.at(subject.size()-1).simpleFutureTense.at(3) = buffers.at(17);
+                subject.at(subject.size()-1).simpleFutureTense.at(4) = buffers.at(18);
+                subject.at(subject.size()-1).simpleFutureTense.at(5) = buffers.at(19);
+    
             }
         }
         file.close();
     }
-    // primary function
     void start(std::vector<verb> &key)
     {
         int correct{0};
@@ -453,6 +439,9 @@ namespace conjucation
             char drawing{1};
             int activeIndex{0};
             int randomInfinitive = std::rand() % key.size();
+            int tense = std::rand() % 3;
+            std::array<std::string, 3> names = {"present", "past", "future"};
+            std::array<std::wstring, 6> * conjucationKey = key.at(randomInfinitive).getTense(tense);
             std::array<std::wstring, 6> inputBuffers;
             while (drawing)
             {
@@ -464,6 +453,7 @@ namespace conjucation
                 addwstr(key.at(randomInfinitive).infinitive.c_str());
                 printw("\nTranslation: ");
                 addwstr(key.at(randomInfinitive).translation.c_str());
+                printw("\nConjugate in %s tense", names.at(tense).c_str());
                 printw("\nAwnsers cannot contain caps. Press + to access special characters");
                 printw("\n\n\n");
                 printWideWithAttribute(activeIndex, 0, 13, 16, inputBuffers);
@@ -603,17 +593,20 @@ namespace conjucation
                 {
                     
                     std::vector<std::string> corrections;
+                    size_t correct {0};
+                    size_t total {0};
                     // conjucations.at(0)
                     for (int x = 0; x < 6; x++)
                     {
                         std::string accuracy;
-                        int i{0};
-                        for (auto k : key.at(randomInfinitive).conjucations.at(x))
+                        total += conjucationKey->at(x).size();
+                        for (size_t k = 0; k < inputBuffers.at(x).size() || k < conjucationKey->at(x).size(); k++)
                         {
-                            if ((i <= key.at(randomInfinitive).conjucations.at(x).length() && i <= inputBuffers[x].length()))
+                            try
                             {
-                                if (k == inputBuffers[x][i])
+                                if (inputBuffers.at(x).at(k) == conjucationKey->at(x).at(k))
                                 {
+                                    correct++;
                                     accuracy += '1';
                                 }
                                 else
@@ -621,7 +614,11 @@ namespace conjucation
                                     accuracy += '0';
                                 }
                             }
-                            i++;
+                            catch(...)
+                            {
+                                accuracy += '0';
+                            }
+                            
                         }
                         corrections.push_back(accuracy);
                     }
@@ -635,13 +632,16 @@ namespace conjucation
                         addwstr(key.at(randomInfinitive).infinitive.c_str());
                         printw("\nTranslation: ");
                         addwstr(key.at(randomInfinitive).translation.c_str());
+                        printw("\nConjugated in %s tense", names.at(tense).c_str());
+                        printw("\nAwnser key is shown\n");
                         printw("\n\n\n");
                         {
                             
                             for (int x = 0; x < 6; x++)
                             {
                                 size_t i{0};
-                                for (wchar_t k : key.at(randomInfinitive).conjucations.at(x))
+
+                                for (wchar_t k : conjucationKey->at(x))
                                 {
                                     wchar_t *freeMe = convertToWideStr(k);
                                     if ((i <= corrections[x].size()))
@@ -672,20 +672,7 @@ namespace conjucation
                                 addch('\n');
                             }
                         }
-                        int num{0};
-                        int questionTotal{0};
-                        for (std::string g : corrections)
-                        {
-                            for (char h : g)
-                            {
-                                questionTotal++;
-                                if (h == '1')
-                                {
-                                    num++;
-                                }
-                            }
-                        }
-                        mvprintw(y - 2, 0, "Score: %.2f%%", ((float)num / (float)questionTotal) * 100);
+                        mvprintw(y - 2, 0, "Score: %.2f%%", ((float)correct / (float)total) * 100);
                         mvprintw(y - 1, 0, "Press q to exit");
                         refresh();
                         int u = getch();

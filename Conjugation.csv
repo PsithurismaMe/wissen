@@ -1,26 +1,32 @@
-to be,sein,bin,bist,ist,sind,seid,sind
-to divorce,scheiden,scheide,scheidest,scheidet,scheiden,scheidet,scheiden
-to have,haben,habe,hast,hat,haben,habt,haben
-to be called,heißen,heiße,heißt,heißt,heißen,heißt,heißen
-to hear,hören,höre,hörst,hört,hören,hört,hören
-to know,kennen,kenne,kennst,kennt,kennen,kennt,kennen
-to share,teilen,teile,teilst,teilt,teilen,teilt,teilen
-to get married,verheiraten,verheirate,verheiratest,verheiratet,verheiraten,verheiratet,verhieraten
-to live,wohnen,wohne,wohnst,wohnt,wohnen,wohnt,wohnen
-to begin,beginnen,beginne,beginnst,beginnt,beginnen,beginnt,beginnen
-to confess,bekennen,bekenne,bekennst,bekennt,bekennen,bekennt,bekennen
-to remain,bleiben,bleibe,bleibst,bleibt,bleiben,bleibt,bleiben
-to last,dauern,dauere,dauerst,dauert,dauern,dauert,dauern
-to favor,gefallen,gefalle,gefällst,gefällt,gefallen,gefallt,gefallen
-to go,gehen,gehe,gehst,geht,gehen,geht,gehen
-to give,geben,gebe,gibst,gibt,geben,gebt,geben
-to make,machen,mache,machst,macht,machen,macht,machen
-to help,helfen,helfe,hilfst,hilft,helfen,helft,helfen
-to fetch,holen,hole,holst,holt,holen,holt,holen
-to read,lesen,lese,liest,liest,lesen,lest,lesen
-to like,mögen,mag,magst,mag,mögen,mögt,mögen
-to say,sagen,sage,sagst,sagt,sagen,sagt,sagen
-to swim,schwimmen,schwimme,schwimmst,schwimmt,schwimmen,schwimmt,schwimmen
-to see,sehen,sehe,siehst,sieht,sehen,seht,sehen
-to play,spielen,spiele,spielst,spielt,spielen,spielt,spielen
-to dance,tanzen,tanze,tanzt,tanzt,tanzen,tanzt,tanzen
+"//English translation","//German infinitive","//First Person Singular, Present tense","//Second Person Singular, Present tense","//Third Person Singular, Present tense","//First Person Plurl, Present tense","//Second Person Plurl, Present tense","//Third Person Singular, Present tense","//First Person Singular, Simple past tense","//Second Person Singular, Simple past tense","//Third Person Singular, Simple past tense","//First Person Plurl, Simple past tense","//Second Person Plurl, Simple past tense","//Third Person Plurl, Simple past tense","//First Person Singular, Simple future tense","//Second Person Singular, Simple future tense","//Third Person Singular, Simple future tense","//First Person Plurl, Simple future tense","//Second Person Plurl, Simple future tense","//Third Person Plurl, Simple future tense"
+"to be","sein","bin","bist","ist","sind","seid","sind","war","warst","war","waren","wart","waren","sein","sein","sein","sein","sein","sein"
+"be/will","werden","werde","wirst","wird","werden","werdet","werden","wurde","wurdest","wurde","wurden","wurdet","wurden","werden","werden","werden","werden","werden","werden"
+"to divorce","scheiden","scheide","scheidest","scheidet","scheiden","scheidet","scheiden","schied","schiedst","schied","schieden","schiedet","schieden","scheiden","scheiden","scheiden","scheiden","scheiden","scheiden"
+"to have","haben","habe","hast","hat","haben","habt","haben","hatte","hattest","hatte","hatten","hattet","hatten","haben","haben","haben","haben","haben","haben"
+"to be called","heißen","heiße","heißt","heißt","heißen","heißt","heißen","heiß","heißt","heiß","heißen","heißt","heißen","heißen","heißen","heißen","heißen","heißen","heißen"
+"to hear","hören","höre","hörst","hört","hören","hört","hören","hörte","hörtest","hörte","hörten","hörtet","hörten","hören","hören","hören","hören","hören","hören"
+"to know","kennen","kenne","kennst","kennt","kennen","kennt","kennen","kannte","kanntest","kannte","kannten","kanntet","kannten","kennen","kennen","kennen","kennen","kennen","kennen"
+"to share","teilen","teile","teilst","teilt","teilen","teilt","teilen","teilte","teiltest","teilte","teilten","teiltet","teilten","teilen","teilen","teilen","teilen","teilen","teilen"
+"to get married","verheiraten","verheirate","verheiratest","verheiratet","verheiraten","verheiratet","verhieraten","verheiratete","verheiratetest","verheiratete","verheirateten","verheiratetet","verheirateten","verheiraten","verheiraten","verheiraten","verheiraten","verheiraten","verheiraten"
+"to live","wohnen","wohne","wohnst","wohnt","wohnen","wohnt","wohnen","wohnte","wohntest","wohnte","wohnten","wohntet","wohnten","wohnen","wohnen","wohnen","wohnen","wohnen","wohnen"
+"to begin","beginnen","beginne","beginnst","beginnt","beginnen","beginnt","beginnen","begann","begannst","begann","begannen","begannt","begannen","beginnen","beginnen","beginnen","beginnen","beginnen","beginnen"
+"to confess","bekennen","bekenne","bekennst","bekennt","bekennen","bekennt","bekennen","bekannte","bekanntest","bekannte","bekannten","bekanntet","bekannten","bekennen","bekennen","bekennen","bekennen","bekennen","bekennen"
+"to remain","bleiben","bleibe","bleibst","bleibt","bleiben","bleibt","bleiben","blieb","bliebst","blieb","blieben","bliebt","blieben","bleiben","bleiben","bleiben","bleiben","bleiben","bleiben"
+"to last","dauern","dauere","dauerst","dauert","dauern","dauert","dauern","dauerte","dauertest","dauerte","dauerten","dauertet","dauerten","dauern","dauern","dauern","dauern","dauern","dauern"
+"to favor","gefallen","gefalle","gefällst","gefällt","gefallen","gefallt","gefallen","gefiel","gefielst","gefiel","gefielen","gefielt","gefielen","gefallen","gefallen","gefallen","gefallen","gefallen","gefallen"
+"to go","gehen","gehe","gehst","geht","gehen","geht","gehen","ging","gingst","ging","gingen","gingt","gingen","gehen","gehen","gehen","gehen","gehen","gehen"
+"to give","geben","gebe","gibst","gibt","geben","gebt","geben","gab","gabst","gab","gaben","gabt","gaben","geben","geben","geben","geben","geben","geben"
+"to make","machen","mache","machst","macht","machen","macht","machen","machte","machtest","machte","machten","machtet","machten","machen","machen","machen","machen","machen","machen"
+"to help","helfen","helfe","hilfst","hilft","helfen","helft","helfen","half","halfst","half","halfen","halft","halfen","helfen","helfen","helfen","helfen","helfen","helfen"
+"to get","holen","hole","holst","holt","holen","holt","holen","holte","holtest","holte","holten","holtet","holten","holen","holen","holen","holen","holen","holen"
+"to read","lesen","lese","liest","liest","lesen","lest","lesen","las","lasest","las","lasen","last","lasen","lesen","lesen","lesen","lesen","lesen","lesen"
+"to say","sagen","sage","sagst","sagt","sagen","sagt","sagen","sagte","sagtest","sagte","sagten","sagtet","sagten","sagen","sagen","sagen","sagen","sagen","sagen"
+"to swim","schwimmen","schwimme","schwimmst","schwimmt","schwimmen","schwimmt","schwimmen","schwamm","schwammst","schwamm","schwammen","schwammt","schwammen","schwimmen","schwimmen","schwimmen","schwimmen","schwimmen","schwimmen"
+"to see","sehen","sehe","siehst","sieht","sehen","seht","sehen","sah","sahst","sah","sahen","saht","sahen","sehen","sehen","sehen","sehen","sehen","sehen"
+"to play","spielen","spiele","spielst","spielt","spielen","spielt","spielen","spielte","spieltest","spielte","spielten","spieltet","spielten","spielen","spielen","spielen","spielen","spielen","spielen"
+"to dance","tanzen","tanze","tanzt","tanzt","tanzen","tanzt","tanzen","tanzte","tanztest","tanzte","tanzten","tanztet","tanzten","tanzen","tanzen","tanzen","tanzen","tanzen","tanzen"
+"to wait","warten","warte","wartest","wartet","warten","wartet","warten","wartete","wartetest","wartete","warteten","wartetet","warteten","warten","warten","warten","warten","warten","warten"
+"to meet","treffen","treffe","triffst","trifft","treffen","trefft","treffen","traf","trafst","traf","trafen","traft","trafen","treffen","treffen","treffen","treffen","treffen","treffen"
+"to agree","stimmen","stimme","stimmst","stimmt","stimmen","stimmt","stimmen","stimmte","stimmtest","stimmte","stimmten","stimmtet","stimmten","stimmen","stimmen","stimmen","stimmen","stimmen","stimmen"
+"to share","teilen","teile","teilst","teilt","teilen","teilt","teilen","teilte","teiltest","teilte","teilten","teiltet","teilten","teilen","teilen","teilen","teilen","teilen","teilen"
+"to like","mögen","mag","magst","mag","mögen","mögt","mögen","mochte","mochtest","mochte","mochten","mochtet","mochten","mögen","mögen","mögen","mögen","mögen","mögen"

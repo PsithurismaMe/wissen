@@ -1,251 +1,315 @@
-bin,am,1
-bist,are,1
-Geschieden,Divorce,1
-Habe,First Person Singular Conjugation of haben (to have),1
-Haben,First Person Plurl Conjugation of haben (to have),1
-Haben,Third Person Plurl Conjugation of haben (to have),1
-Habt,Second Person Plurl Conjugation of haben (to have),1
-Hast,Second Person Singular Conjugation of haben (to have),1
-Hat,Third Person Singular Conjugation of haben (to have),1
-heiße,First Person Singular To Be Called,1
-heißen,First Person Plurl To Be Called,1
-heißt,First Person Plurl; Third Person Singular; Second Person Plurl; To be called,1
-Hören,Hear,1
-ist ,Third Person Singular To be,1
-kennen,know,1
-seid,Second Person Plurl To be,1
-sein,to be,1
-sind,First Person Plurl; Second Person Singular; To be,1
-teilen,divide,1
-Verheiratet,Married,1
-wohnen,to live,1
-beginnen,to begin,1
-bekannt,well known;,1
-bekennen,to confess; to commit;,1
-bleiben,to stay,1
-dauern,to take; last; continue;,1
-fernsehen,to watch,1
-gefallen,to like,1
-gehen,to go,1
-gibt,there is,1
-geben,give; enter; provide;,1
-haben,to have,1
-machen,make; do; take;,1
-helfen,to help,1
-holen,to get; fetch;,1
-lesen,to read,1
-möchten,would like to,1
-mögen,like; may; love;,1
-sagen,to say; tell;,1
-schwimmen,to swim,1
-sehen,to see,1
-spielen,to play,1
-tanzen,to dance,1
-Abend,Evening,0
-acht,8,0
-achtzehn,18,0
-Adopted,Adopiert,0
-alles gutes,All Good,0
-alt,old,0
-Aus,out of,0
-Auswahl,Selection,0
-Bitte,Please,0
-Bruder,Brother,0
-Cousin,Cousin(Male),0
-Cousine,Cousin(Female),0
-das,the/that,0
-deine,your,0
-Dienstag,Tuesday,0
-Donnerstag,Thursday,0
-drei,3,0
-dreizehn,13,0
-du,Second Person Singular You,0
-ecke,corner,0
-einhundert,100 = 1 * 10 ^ 2,0
-einmal,Once,0
-einmillion,1000000 = 1 * 10 ^ 6,0
-eins,1,0
-einundzwanzig,21,0
-elf,11,0
-Eltern,Parents,0
-Enkel-,Grand-(child/son/daughter),0
-er,Third Person Singular He,0
-es,Third Person Singular It,0
-Familie,Family,0
-Frau,Wife/Woman,0
-Freitag,Friday,0
-fünf,5,0
-fünfzehn,15,0
-Ganz,Complete,0
-Gegen,around (when used in a time context),0
-Geschwister,Sibling,0
-Groß(individual word),large/tall/big,0
-Großeltern,Grand Parents,0
-Großmutter/Oma,Grandmother/Grandma,0
-Großvater/Opa,Grandfatther/Grandpa,0
-Grüßdich,Greetings(exclusive to southern Germany),0
-Grüßgott,Greetings from God(exclusive to southern germany. Has religious connotations),0
-gut,Good,0
-Guten Tag,hello(formal),0
-Halb,Half- (Prefix),0
-Hallo,Hello(informal),0
-Heute,Today,0
-Hi,Hi(informal),0
-Ich,First Person Singular I,0
-Ich komme aus,I come out of,0
-ihr,Second Person Plurl We,0
-Ihr seid,How old are ya”ll?,0
-Interessant,Interesting,0
-Jahr ,year,0
-Jahre,years,0
-jung,young,0
-Kaufhaus,Department Store,0
-Kinder,Children,0
-Klug,Smart,0
-Mal,times(math),0
-Mama,Mommy/mother,0
-Mann,Husband/Man,0
-Minus,minus,0
-Mittag,Noon,0
-Mittelnacht,Midnight,0
-Mittwoch,Wednesday,0
-Montag,Monday,0
-morgen,Morning,0
-Musik,Music,0
-Mutter,Mother,0
-Mutti,Mommy/mother,0
-müde,tired,0
-Nachmittag,Afternoon,0
-Nacht,Night,0
-name,name,0
-Neffe ,Nephew,0
-nett,nice,0
-Nett,nice/kind/plesant,0
-neu,new,0
-neun,9,0
-neunzehn,19,0
-nicht,not,0
-Nichte,Niece,0
-Norden,North,0
-null,0,0
-Onkel,Uncle,0
-Papa,Dad/Daddy,0
-Partner,Partner,0
-Plus,plus,0
-Rockgruppe,Rockband,0
-Samstag,Saturday,0
-Schwester,Sister,0
-Schwiege,in-law,0
-sechs,6,0
-sechszehn,16,0
-Sehr,Very,0
-Sehr,Very/really,0
-Servus,Howdy(exclusive to southern germany),0
-sie,she/they,0
-Sie,Second Person Singular Formal You,0
-sieben,7,0
-siebzehn,17,0
-so lala,Okay,0
-Sohn,Son,0
-Sonntag,Sunday,0
-Stadt,City,0
-Stief,Step- (Prefix),0
-Tag,Day,0
-Tante,Aunt,0
-tausend,1000 = 1 * 10 ^ 3,0
-Tochter,Daughter,0
-toll(adj.),Great,0
-trauig,Sad,0
-Uhr,Clock,0
-Um,at (when used in the context of time),0
-und,and,0
-Ur,Great- (Prefix),0
-Vater,Father,0
-Vati,Dad/Daddy,0
-veile,many,0
-Vetter,Cousin(Gender Neutral),0
-Viel,Much,0
-vier,4,0
-vierzehn,14,0
-was ist deine name?,What is your name?,0
-Was ist seine/ihre/ihren name?,What is his/her/their name?,0
-Weit,Far,0
-Wer,Who,0
-wer bist du?,Who are you?(Has negative connotations),0
-Wer ist das?,who is that?,0
-Wie alt bist du?,How old are you?,0
-wie gets,How are you?,0
-Wie heißt du?,How are you called?,0
-Wie viel,How much?,0
-Wiedersehen,Bye,0
-wir,First Person Plurl We,0
-Woher kommst du?,Where are you from?,0
-Wünderbar,Wonderful,0
-zehn,10,0
-Zeit,Time,0
-zwanzig,20,0
-zwei,2,0
-Zwilling,Twin,0
-zwölf,12,0
-Abend,evening,0
-aber,but,0
-ach ya,oh yes,0
-Bahnhof,train station,0
-Basketball,basketball,0
-bei,at; near; with;,0
-beide,both,0
-buch,book,0
-charmant,charming,0
-computer,computer,0
-computerspiel,computer game,0
-dann,then,0
-Deutsch,German,0
-dir: von dir,about you,0
-disko,disco,0
-doch,used for emphasis,0
-dort,there,0
-etwas,some; a little;,0
-fernsehprogramm,television program,0
-film,film,0
-für,for,0
-fußball,soccer,0
-gern,gladly; with pleasure;,0
-Gitarre,guitar,0
-hausaufgabe,homework,0
-hit(musik),hit(music),0
-Idee,idea,0
-immer,always,0
-jetzt,now,0
-karte,ticket; card;,0
-kein(e),no,0
-klavier,piano,0
-krimi,detective story,0
-mir: mit mir,with me,0
-mehr,more,0
-mittag,noon,0
-moment,moment,0
-muss: ich muss helfen,I have to help,0
-na und,so what,0
-nach,after; to;,0
-nachricht,news,0
-problem,problem,0
-rockkonzert,rock concert,0
-schlauberger,smartie,0
-schnell,fast,0
-Schule,school,0
-sommer,summer,0
-spaß,fun,0
-sportschau,sports show,0
-stunde,hour,0
-tennis,tennis,0
-video,video,0
-videothek,name of video rental store,0
-viertel,quarter,0
-vor,before; in front of;,0
-wann,when,0
-warum,why,0
-was,what,0
-woche,week,0
-zu,too,0
-zuerst,first ,0
-zusammen,together,0
+"Geschieden","Divorced","0"
+"Haben","to have","1"
+"heißen","to be called","1"
+"Hören","Hear","1"
+"kennen","know","1"
+"sein","to be","1"
+"teilen","to share","1"
+"Verheiratet","Married","1"
+"wohnen","to live","1"
+"beginnen","to begin","1"
+"bekannt","well known;","1"
+"bekennen","to confess; to commit;","1"
+"bleiben","to stay","1"
+"dauern","to take; last; continue;","1"
+"fernsehen","to watch","1"
+"gefallen","to like","1"
+"gehen","to go","1"
+"gibt","there is","1"
+"geben","give; enter; provide;","1"
+"haben","to have","1"
+"machen","make; do; take;","1"
+"helfen","to help","1"
+"holen","to get; fetch;","1"
+"lesen","to read","1"
+"möchten","would like to","1"
+"mögen","like; may; love;","1"
+"sagen","to say; tell;","1"
+"schwimmen","to swim","1"
+"sehen","to see","1"
+"spielen","to play","1"
+"tanzen","to dance","1"
+"Abend","Evening","0"
+"acht","8","0"
+"achtzehn","18","0"
+"Adopiert","Adopted","0"
+"alles gutes","All Good","0"
+"alt","old","0"
+"Aus","out of","0"
+"Auswahl","Selection","0"
+"Bitte","Please","0"
+"Bruder","Brother","0"
+"Cousin","Cousin(Male)","0"
+"Cousine","Cousin(Female)","0"
+"das","the/that","0"
+"deine","your","0"
+"Dienstag","Tuesday","0"
+"Donnerstag","Thursday","0"
+"drei","3","0"
+"dreizehn","13","0"
+"du","Second Person Singular You","0"
+"ecke","corner","0"
+"einhundert","100 = 1 * 10 ^ 2","0"
+"einmal","Once","0"
+"einmillion","1000000 = 1 * 10 ^ 6","0"
+"eins","1","0"
+"einundzwanzig","21","0"
+"elf","11","0"
+"Eltern","Parents","0"
+"Enkel-","Grand-(child/son/daughter)","0"
+"er","Third Person Singular He","0"
+"es","Third Person Singular It","0"
+"Familie","Family","0"
+"Frau","Wife/Woman","0"
+"Freitag","Friday","0"
+"fünf","5","0"
+"fünfzehn","15","0"
+"Ganz","Complete","0"
+"Gegen","around (when used in a time context)","0"
+"Geschwister","Sibling","0"
+"Groß","large/tall/big","0"
+"Großeltern","Grand Parents","0"
+"Großmutter/Oma","Grandmother/Grandma","0"
+"Großvater/Opa","Grandfatther/Grandpa","0"
+"Grüßdich","Greetings(exclusive to southern Germany)","0"
+"Grüßgott","Greetings from God(exclusive to southern germany. Has religious connotations)","0"
+"gut","Good","0"
+"Guten Tag","hello(formal)","0"
+"Halb","Half- (Prefix)","0"
+"Hallo","Hello(informal)","0"
+"Heute","Today","0"
+"Hi","Hi(informal)","0"
+"Ich","First Person Singular I","0"
+"Ich komme aus","I come out of","0"
+"ihr","Second Person Plurl We","0"
+"Ihr seid","How old are ya”ll?","0"
+"Interessant","Interesting","0"
+"Jahr","year","0"
+"Jahre","years","0"
+"jung","young","0"
+"Kaufhaus","Department Store","0"
+"Kinder","Children","0"
+"Klug","Smart","0"
+"Mal","times(math)","0"
+"Mama","Mommy/mother","0"
+"Mann","Husband/Man","0"
+"Minus","minus","0"
+"Mittag","Noon","0"
+"Mittelnacht","Midnight","0"
+"Mittwoch","Wednesday","0"
+"Montag","Monday","0"
+"morgen","Morning","0"
+"Musik","Music","0"
+"Mutter","Mother","0"
+"Mutti","Mommy/mother","0"
+"müde","tired","0"
+"Nachmittag","Afternoon","0"
+"Nacht","Night","0"
+"name","name","0"
+"Neffe","Nephew","0"
+"nett","nice","0"
+"Nett","nice/kind/plesant","0"
+"neu","new","0"
+"neun","9","0"
+"neunzehn","19","0"
+"nicht","not","0"
+"Nichte","Niece","0"
+"Norden","North","0"
+"null","0","0"
+"Onkel","Uncle","0"
+"Papa","Dad/Daddy","0"
+"Partner","Partner","0"
+"Plus","plus","0"
+"Rockgruppe","Rockband","0"
+"Samstag","Saturday","0"
+"Schwester","Sister","0"
+"Schwiege","in-law","0"
+"sechs","6","0"
+"sechszehn","16","0"
+"Sehr","Very/really","0"
+"Servus","Howdy(exclusive to southern germany)","0"
+"sie","she/they","0"
+"Sie","Second Person Singular Formal You","0"
+"sieben","7","0"
+"siebzehn","17","0"
+"so lala","Okay","0"
+"Sohn","Son","0"
+"Sonntag","Sunday","0"
+"Stadt","City","0"
+"Stief","Step- (Prefix)","0"
+"Tag","Day","0"
+"Tante","Aunt","0"
+"tausend","1000 = 1 * 10 ^ 3","0"
+"Tochter","Daughter","0"
+"toll(adj.)","Great","0"
+"trauig","Sad","0"
+"Uhr","Clock","0"
+"Um","at (when used in the context of time)","0"
+"und","and","0"
+"Ur","Great- (Prefix)","0"
+"Vater","Father","0"
+"Vati","Dad/Daddy","0"
+"veile","many","0"
+"Vetter","Cousin(Gender Neutral)","0"
+"Viel","Much","0"
+"vier","4","0"
+"vierzehn","14","0"
+"was ist deine name?","What is your name?","0"
+"Was ist seine/ihre/ihren name?","What is his/her/their name?","0"
+"Weit","Far","0"
+"Wer","Who","0"
+"wer bist du?","Who are you?(Has negative connotations)","0"
+"Wer ist das?","who is that?","0"
+"Wie alt bist du?","How old are you?","0"
+"wie gets","How are you?","0"
+"Wie heißt du?","How are you called?","0"
+"Wie viel","How much?","0"
+"Wiedersehen","Bye","0"
+"wir","First Person Plurl We","0"
+"Woher kommst du?","Where are you from?","0"
+"Wünderbar","Wonderful","0"
+"zehn","10","0"
+"Zeit","Time","0"
+"zwanzig","20","0"
+"zwei","2","0"
+"Zwilling","Twin","0"
+"zwölf","12","0"
+"Abend","evening","0"
+"aber","but","0"
+"ach ya","oh yes","0"
+"Bahnhof","train station","0"
+"Basketball","basketball","0"
+"bei","at; near; with;","0"
+"beide","both","0"
+"buch","book","0"
+"charmant","charming","0"
+"computer","computer","0"
+"computerspiel","computer game","0"
+"dann","then","0"
+"Deutsch","German","0"
+"dir: von dir","about you","0"
+"disko","disco","0"
+"doch","used for emphasis","0"
+"dort","there","0"
+"etwas","some; a little;","0"
+"fernsehprogramm","television program","0"
+"film","film","0"
+"für","for","0"
+"fußball","soccer","0"
+"gern","gladly; with pleasure;","0"
+"Gitarre","guitar","0"
+"hausaufgabe","homework","0"
+"hit(musik)","hit(music)","0"
+"Idee","idea","0"
+"immer","always","0"
+"jetzt","now","0"
+"karte","ticket; card;","0"
+"kein(e)","no","0"
+"klavier","piano","0"
+"krimi","detective story","0"
+"mir: mit mir","with me","0"
+"mehr","more","0"
+"mittag","noon","0"
+"moment","moment","0"
+"muss: ich muss helfen","I have to help","0"
+"na und","so what","0"
+"nach","after; to;","0"
+"nachricht","news","0"
+"problem","problem","0"
+"rockkonzert","rock concert","0"
+"schlauberger","smartie","0"
+"schnell","fast","0"
+"Schule","school","0"
+"sommer","summer","0"
+"spaß","fun","0"
+"sportschau","sports show","0"
+"stunde","hour","0"
+"tennis","tennis","0"
+"video","video","0"
+"videothek","name of video rental store","0"
+"viertel","quarter","0"
+"vor","before; in front of;","0"
+"wann","when","0"
+"warum","why","0"
+"was","what","0"
+"woche","week","0"
+"zu","too","0"
+"zuerst","first","0"
+"zusammen","together","0"
+"arbeiten","work","1"
+"auf","on top of/on","0"
+"bayern","Bavaria","0"
+"bekommen","to get/receive","1"
+"Die biologie","biology","0"
+"Der bleistift","pencil","0"
+"brauchen","to need","1"
+"das bundesland","Federal state(germany)","0"
+"der bus","Bus","0"
+"Die Chemie","chemistry","0"
+"dunkel","dark","0"
+"Das englisch","English","0"
+"Die Erdkunde","geography","0"
+"erst","first","0"
+"das fachër","subject(school)","0"
+"fast","almost","0"
+"finden","to find","1"
+"Das Französisch","French","0"
+"froh","glad; happy","0"
+"früh","early","0"
+"das frühstück","breakfast","0"
+"genug","enough","0"
+"gern haben","to like","1"
+"Die Geschichte","history","0"
+"Das haus","House","0"
+"Das heft","notebook","0"
+"Der Herbst","fall; autumn","0"
+"herkommen","to come here","1"
+"die informatik","computer science","0"
+"Die informatikaufgabe","computer science assignment","0"
+"jed","every; each","0"
+"kaufen","to buy","1"
+"die klasse","class","0"
+"klingeln","to ring(a bell)","1"
+"klug","smart","0"
+"die kreide","chalk","0"
+"der Kuli","pen","0"
+"die landkarte","map","0"
+"lang(e)","long","0"
+"langsam","slow","0"
+"langweilig","boring","0"
+"das Latein","latin","0"
+"der Lehrer","teacher(male)","0"
+"die Lehrerin","teacher(female)","0"
+"leicht","easy","0"
+"lernen","to learn","1"
+"das Lieblingsfachër","favorite (school) subject","0"
+"das lineal","ruler","0"
+"manchmal","sometimes","0"
+"die mathematik","Mathematics","0"
+"meinen","to mean","1"
+"die Naturwissenschaften","natural sciences","0"
+"nervös","nervous","0"
+"nie","never","0"
+"noch","still","0"
+"die note","grade","0"
+"ohne","without","0"
+"das Papier","paper","0"
+"die pause","recess/break","0"
+"die Physik","physics","0"
+"der Radiergummi","eraser","0"
+"der rechner","calculator","0"
+"das recht","right","0"
+"die religion","religion","0"
+"der schulfreund","schoolmate","0"
+"die Schultasche","schoolbag","0"
+"schwer","hard","0"
+"der Sport","sports","0"
+"stimmen","to agree","1"
+"der stuhl","chair","0"
+"der stundenplan","class schedule","0"
+"die Tafel","chalkboard","0"
+"der Tafellappen","rag(which cleans white boards)","0"
+"der Tisch","table","0"
+"treffen","to meet","1"
+"warten","to wait","1"
+"wie viele","how many","0"
