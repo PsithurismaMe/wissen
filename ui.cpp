@@ -295,6 +295,11 @@ namespace multiChoice
             std::cerr << "Failed to read file." << std::endl;
             return;
         }
+        {
+            // Skip the first line
+            std::string dummyBuffer;
+            std::getline(file, dummyBuffer);
+        }
         while (!file.eof())
         {
             std::string entireLineContents;
