@@ -136,25 +136,24 @@ namespace multiChoice
             }
             mvprintw(maY - 4, 0, "Awnser to previous question: ");
             addwstr((*contents)[awnserCache].German.c_str());
-                if (timeStamps.size() != 0)
+            if (timeStamps.size() != 0)
+            {
+                mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[((timeStampIterator - 1) % 20)].count()).c_str());
+                float mean{0.0};
+                float variance{0.0};
+                float stdDeviation{0.0};
+                for (auto i : timeStamps)
                 {
-                    mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[((timeStampIterator - 1) % 20)].count()).c_str());
-                    float mean {0.0};
-                    float variance {0.0};
-                    float stdDeviation {0.0};
-                    for (auto i : timeStamps)
-                    {
-                        mean = i.count();
-                    }
-                    for (auto i : timeStamps)
-                    {
-                        variance += std::pow((((float) i.count() - mean)), 2);
-                    }
-                    variance = variance / (float) timeStamps.size();
-                    stdDeviation = std::sqrt(variance);
-                    mvprintw(maY - 2, 0, "Standard Deviation: %.3f", stdDeviation);
-
+                    mean = i.count();
                 }
+                for (auto i : timeStamps)
+                {
+                    variance += std::pow((((float)i.count() - mean)), 2);
+                }
+                variance = variance / (float)timeStamps.size();
+                stdDeviation = std::sqrt(variance);
+                mvprintw(maY - 2, 0, "Standard Deviation: %.3f", stdDeviation);
+            }
             mvprintw(maY - 1, 0, "%s sec", std::to_string(elapsedTime.count()).c_str());
 
             // Display accuracy
@@ -356,7 +355,7 @@ namespace conjucation
         std::array<std::wstring, 6> simplePresentTense;
         std::array<std::wstring, 6> simplePastTense;
         std::array<std::wstring, 6> simpleFutureTense;
-        std::array<std::wstring, 6> * getTense(int tense) // 0 == Present, 1 == Past, 2 == Future
+        std::array<std::wstring, 6> *getTense(int tense) // 0 == Present, 1 == Past, 2 == Future
         {
             if (tense == 0)
             {
@@ -403,31 +402,29 @@ namespace conjucation
                         buffers.at(x) += wideEntireLineContents.at(i);
                         i++;
                     }
-                        i += 3;
-                    
+                    i += 3;
                 }
                 subject.push_back(verb());
-                subject.at(subject.size()-1).translation = buffers.at(0);
-                subject.at(subject.size()-1).infinitive = buffers.at(1);
-                subject.at(subject.size()-1).simplePresentTense.at(0) = buffers.at(2);
-                subject.at(subject.size()-1).simplePresentTense.at(1) = buffers.at(3);
-                subject.at(subject.size()-1).simplePresentTense.at(2) = buffers.at(4);
-                subject.at(subject.size()-1).simplePresentTense.at(3) = buffers.at(5);
-                subject.at(subject.size()-1).simplePresentTense.at(4) = buffers.at(6);
-                subject.at(subject.size()-1).simplePresentTense.at(5) = buffers.at(7);
-                subject.at(subject.size()-1).simplePastTense.at(0) = buffers.at(8);
-                subject.at(subject.size()-1).simplePastTense.at(1) = buffers.at(9);
-                subject.at(subject.size()-1).simplePastTense.at(2) = buffers.at(10);
-                subject.at(subject.size()-1).simplePastTense.at(3) = buffers.at(11);
-                subject.at(subject.size()-1).simplePastTense.at(4) = buffers.at(12);
-                subject.at(subject.size()-1).simplePastTense.at(5) = buffers.at(13);
-                subject.at(subject.size()-1).simpleFutureTense.at(0) = buffers.at(14);
-                subject.at(subject.size()-1).simpleFutureTense.at(1) = buffers.at(15);
-                subject.at(subject.size()-1).simpleFutureTense.at(2) = buffers.at(16);
-                subject.at(subject.size()-1).simpleFutureTense.at(3) = buffers.at(17);
-                subject.at(subject.size()-1).simpleFutureTense.at(4) = buffers.at(18);
-                subject.at(subject.size()-1).simpleFutureTense.at(5) = buffers.at(19);
-    
+                subject.at(subject.size() - 1).translation = buffers.at(0);
+                subject.at(subject.size() - 1).infinitive = buffers.at(1);
+                subject.at(subject.size() - 1).simplePresentTense.at(0) = buffers.at(2);
+                subject.at(subject.size() - 1).simplePresentTense.at(1) = buffers.at(3);
+                subject.at(subject.size() - 1).simplePresentTense.at(2) = buffers.at(4);
+                subject.at(subject.size() - 1).simplePresentTense.at(3) = buffers.at(5);
+                subject.at(subject.size() - 1).simplePresentTense.at(4) = buffers.at(6);
+                subject.at(subject.size() - 1).simplePresentTense.at(5) = buffers.at(7);
+                subject.at(subject.size() - 1).simplePastTense.at(0) = buffers.at(8);
+                subject.at(subject.size() - 1).simplePastTense.at(1) = buffers.at(9);
+                subject.at(subject.size() - 1).simplePastTense.at(2) = buffers.at(10);
+                subject.at(subject.size() - 1).simplePastTense.at(3) = buffers.at(11);
+                subject.at(subject.size() - 1).simplePastTense.at(4) = buffers.at(12);
+                subject.at(subject.size() - 1).simplePastTense.at(5) = buffers.at(13);
+                subject.at(subject.size() - 1).simpleFutureTense.at(0) = buffers.at(14);
+                subject.at(subject.size() - 1).simpleFutureTense.at(1) = buffers.at(15);
+                subject.at(subject.size() - 1).simpleFutureTense.at(2) = buffers.at(16);
+                subject.at(subject.size() - 1).simpleFutureTense.at(3) = buffers.at(17);
+                subject.at(subject.size() - 1).simpleFutureTense.at(4) = buffers.at(18);
+                subject.at(subject.size() - 1).simpleFutureTense.at(5) = buffers.at(19);
             }
         }
         file.close();
@@ -442,11 +439,12 @@ namespace conjucation
         while (run)
         {
             char drawing{1};
+            char writeOnAllLines{0};
             int activeIndex{0};
             int randomInfinitive = std::rand() % key.size();
             int tense = std::rand() % 3;
             std::array<std::string, 3> names = {"present", "past", "future"};
-            std::array<std::wstring, 6> * conjucationKey = key.at(randomInfinitive).getTense(tense);
+            std::array<std::wstring, 6> *conjucationKey = key.at(randomInfinitive).getTense(tense);
             std::array<std::wstring, 6> inputBuffers;
             while (drawing)
             {
@@ -460,7 +458,13 @@ namespace conjucation
                 addwstr(key.at(randomInfinitive).translation.c_str());
                 printw("\nConjugate in %s tense", names.at(tense).c_str());
                 printw("\nAwnsers cannot contain caps. Press + to access special characters");
-                printw("\n\n\n");
+                if (writeOnAllLines)
+                {
+                    attron(COLOR_PAIR(10));
+                    printw("\nYOU ARE WRITING ON ALL LINES. PRESS / to toggle");
+                    attroff(COLOR_PAIR(10));
+                }
+                printw("\n\n");
                 printWideWithAttribute(activeIndex, 0, 13, 16, inputBuffers);
                 printWideWithAttribute(activeIndex, 1, 13, 16, inputBuffers);
                 printWideWithAttribute(activeIndex, 2, 13, 16, inputBuffers);
@@ -510,12 +514,30 @@ namespace conjucation
                 break;
                 case (KEY_BACKSPACE):
                 {
-                    if (inputBuffers[activeIndex].size() > 0)
+                    if (writeOnAllLines)
                     {
-                        inputBuffers[activeIndex].pop_back();
+                        for (int i = 0; i < 6; i++)
+                        {
+                            if (inputBuffers[i].size() > 0)
+                            {
+                                inputBuffers[i].pop_back();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (inputBuffers[activeIndex].size() > 0)
+                        {
+                            inputBuffers[activeIndex].pop_back();
+                        }
                     }
                 }
                 break;
+                case ('/'):
+                {
+                    writeOnAllLines = !writeOnAllLines;
+                    break;
+                }
                 case ('+'):
                 {
                     char hasResponded{0};
@@ -580,7 +602,17 @@ namespace conjucation
                         case ('\n'):
                         {
                             hasResponded = 1;
-                            inputBuffers[activeIndex] += choices[selected];
+                            if (writeOnAllLines)
+                            {
+                                for (int i = 0; i < 6; i++)
+                                {
+                                    inputBuffers[i] += choices[selected];
+                                }
+                            }
+                            else
+                            {
+                                inputBuffers[activeIndex] += choices[selected];
+                            }
                         }
                         break;
                         case ('q'):
@@ -596,10 +628,10 @@ namespace conjucation
                 break;
                 case ('-'):
                 {
-                    
+
                     std::vector<std::string> corrections;
-                    size_t correct {0};
-                    size_t total {0};
+                    size_t correct{0};
+                    size_t total{0};
                     // conjucations.at(0)
                     for (int x = 0; x < 6; x++)
                     {
@@ -619,15 +651,14 @@ namespace conjucation
                                     accuracy += '0';
                                 }
                             }
-                            catch(...)
+                            catch (...)
                             {
                                 accuracy += '0';
                             }
-                            
                         }
                         corrections.push_back(accuracy);
                     }
-                    
+
                     // Print corrections
                     char stop{0};
                     while (!stop)
@@ -641,7 +672,7 @@ namespace conjucation
                         printw("\nAwnser key is shown\n");
                         printw("\n\n\n");
                         {
-                            
+
                             for (int x = 0; x < 6; x++)
                             {
                                 size_t i{0};
@@ -672,7 +703,6 @@ namespace conjucation
                                     }
                                     i++;
                                     std::free((void *)freeMe);
-                                    
                                 }
                                 addch('\n');
                             }
@@ -698,7 +728,17 @@ namespace conjucation
                 {
                     if (response > 91 && response < 123)
                     {
-                        inputBuffers[activeIndex] += response;
+                        if (writeOnAllLines)
+                        {
+                            for (int i = 0; i < 6; i++)
+                            {
+                                inputBuffers[i] += response;
+                            }
+                        }
+                        else
+                        {
+                            inputBuffers[activeIndex] += response;
+                        }
                     }
                 }
                 break;
@@ -727,7 +767,6 @@ namespace titleScreen
         choices[1] = "Verb Conjugation";
         choices[2] = "Exit";
         std::string license = "Wissen is licensed under the GPL-v3. See LICENSE file for more details.";
-
 
         while (!quitProgram)
         {
@@ -851,6 +890,7 @@ int main(int argc, char **argv)
     }
 
     // Define color pairs
+    use_default_colors();
     start_color();
     init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Unselected option
     init_pair(2, COLOR_CYAN, COLOR_BLACK);   // UI Color
