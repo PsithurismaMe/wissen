@@ -19,12 +19,17 @@
 #include <ncurses.h>
 #include <thread>
 
-int NumOfquestions{4};
-size_t refreshRate{16666};
+int numberOfQuestions{4};
 
-// RGB array
-int rgbHighlighted[] = {10, 13, 11, 12, 13, 3};
-int rgb[] = {4, 16, 5, 15, 16, 1};
+/*
+This is calculated using
+
+(1 / x) * 1e6
+
+Where:
+    x = monitor refresh rate in hertz
+*/
+size_t refreshRate{16666}; 
 
 // Needed to getline wchar_t correctly
 std::wstring widen(const std::string &utf8_string)
@@ -42,27 +47,18 @@ namespace debug
 // A struct for storing a word regardless of language
 struct word
 {
-    std::wstring German;
-    std::wstring English;
+    std::wstring german;
+    std::wstring english;
     word(std::wstring _e, std::wstring _deutsch)
     {
-        German = _deutsch;
-        English = _e;
+        german = _deutsch;
+        english = _e;
     }
 };
 
-// I dont know why i cant put this in the conjucation namespace without compiler errors
-// Remember to free this after use
-wchar_t *convertToWideStr(wchar_t letter)
-{
-    wchar_t *thingToReturn = (wchar_t *)std::malloc(2 * sizeof(wchar_t));
-    thingToReturn[0] = letter;
-    thingToReturn[1] = '\0';
-    return thingToReturn;
-}
 
 // A function which returns a vector of unique numbers. End number is not included.
-std::vector<signed long int> randomUniqueNum(signed long int start, signed long int end, size_t numberOfEntries)
+std::vector<signed long int> randomUniqueNumber(signed long int start, signed long int end, size_t numberOfEntries)
 {
     std::vector<signed long int> thingToReturn;
     while (thingToReturn.size() != numberOfEntries)
@@ -101,7 +97,7 @@ namespace multiChoice
     // The draw function draws all things on screen. This should only be called when constructing a std::thread
     void draw(int *living, std::wstring title, std::vector<signed long int> *randoms, int *highlighedIndex, std::vector<word> *contents, int maY, int maX, int *correct, int *total, std::chrono::_V2::steady_clock::time_point *start)
     {
-        // Set this to 1 to show debug info on questonare
+        // Set this to 1 to show debug info on questionnaire
         int debugMode{0};
         while (*living == -1)
         {
@@ -115,14 +111,14 @@ namespace multiChoice
                 if (*highlighedIndex == i)
                 {
                     attron(COLOR_PAIR(13));
-                    addwstr((*contents)[(*randoms)[i]].German.c_str());
+                    addwstr((*contents)[(*randoms)[i]].german.c_str());
                     attroff(COLOR_PAIR(13));
                     printw("\n\t");
                 }
                 else
                 {
                     attron(COLOR_PAIR(16));
-                    addwstr((*contents)[(*randoms)[i]].German.c_str());
+                    addwstr((*contents)[(*randoms)[i]].german.c_str());
                     attroff(COLOR_PAIR(16));
                     printw("\n\t");
                 }
@@ -134,8 +130,8 @@ namespace multiChoice
                 mvprintw(maY - 4, 0, "Value of myInt: %d", debug::emptyInts[1]);
                 mvprintw(maY - 3, 0, "Index of last entry: %d", debug::emptyInts[0]);
             }
-            mvprintw(maY - 4, 0, "Awnser to previous question: ");
-            addwstr((*contents)[awnserCache].German.c_str());
+            mvprintw(maY - 4, 0, "Answer to previous question: ");
+            addwstr((*contents)[awnserCache].german.c_str());
             if (timeStamps.size() != 0)
             {
                 mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[((timeStampIterator - 1) % 20)].count()).c_str());
@@ -252,7 +248,7 @@ namespace multiChoice
         }
         return choice;
     }
-    // This function initiates multiple choice quisonare
+    // This function initiates multiple choice questionnaire
     void startRandomChoice(std::vector<word> *masterKey, int questions)
     {
         int correct{0};
@@ -260,19 +256,19 @@ namespace multiChoice
         char run{1};
         while (run)
         {
-            // Generate 4 uniqe random numbers between 0 and 4
-            std::vector<signed long int> randomWordIndexes = randomUniqueNum(0, masterKey->size() - 1, questions);
+            // Generate 4 unique random numbers between 0 and 4
+            std::vector<signed long int> randomWordIndexes = randomUniqueNumber(0, masterKey->size() - 1, questions);
             // Pick a random number between 0 and 4
             int myInt = std::rand() % randomWordIndexes.size();
             debug::emptyInts[1] = myInt;
 
-            std::wstring title = L"Please translate the following: " + masterKey->at(randomWordIndexes.at(myInt)).English;
-            // Start quizonare and record awnser
+            std::wstring title = L"Please translate the following: " + masterKey->at(randomWordIndexes.at(myInt)).english;
+            // Start questionnaire and record Answer
             int userAwnser = multiChoice::individualWordTranslationMultipleChoice(masterKey, &randomWordIndexes, title, &correct, &total);
             accuracyCache1 = 100 * ((float)correct / (float)total);
             debug::emptyInts[0] = userAwnser;
             awnserCache = randomWordIndexes[myInt];
-            // Check if awnser is correct
+            // Check if Answer is correct
             if (userAwnser == myInt)
             {
                 correct++;
@@ -330,6 +326,14 @@ namespace multiChoice
 
 namespace conjucation
 {
+    wchar_t *convertToWideStr(wchar_t letter)
+    {
+        wchar_t *thingToReturn = (wchar_t *)std::malloc(2 * sizeof(wchar_t));
+        thingToReturn[0] = letter;
+        thingToReturn[1] = '\0';
+        return thingToReturn;
+    }
+
     void printWideWithAttribute(int &indicator, int index, int colorpairOn, int colorpairOff, std::array<std::wstring, 6> &inputBuffers)
     {
         if (indicator == index)
@@ -632,7 +636,7 @@ namespace conjucation
                     std::vector<std::string> corrections;
                     size_t correct{0};
                     size_t total{0};
-                    // conjucations.at(0)
+                    // conjugations.at(0)
                     for (int x = 0; x < 6; x++)
                     {
                         std::string accuracy;
@@ -761,7 +765,7 @@ namespace titleScreen
     {
         std::array<std::string, 2> title;
         std::array<std::string, 3> choices;
-        title[0] = "German";
+        title[0] = "german";
         title[1] = "Quizzer";
         choices[0] = "Multiple Choice Word Translation";
         choices[1] = "Verb Conjugation";
@@ -823,7 +827,7 @@ namespace titleScreen
                 {
                     std::vector<word> masterKey;
                     multiChoice::readMasterKey(masterKey);
-                    multiChoice::startRandomChoice(&masterKey, NumOfquestions);
+                    multiChoice::startRandomChoice(&masterKey, numberOfQuestions);
                 }
                 break;
                 case (1):
@@ -853,7 +857,7 @@ int main(int argc, char **argv)
 {
     if (argc > 1 && !std::isdigit(*argv[1]))
     {
-        std::cout << "Ultimate Quizzer- A tool to help learn German written in C++" << std::endl;
+        std::cout << "Ultimate Quizzer- A tool to help learn german written in C++" << std::endl;
         std::cout << "Command syntax:\n\ta.out <refresh rate> <number of multiple choice questions>\n\nAll arguments are optional" << std::endl;
         return 0;
     }
@@ -863,7 +867,7 @@ int main(int argc, char **argv)
         refreshRate = 1000000 * placeholder;
         if (argc > 2 && std::isdigit(*argv[2]))
         {
-            NumOfquestions = std::atoi(argv[2]);
+            numberOfQuestions = std::atoi(argv[2]);
         }
     }
     // Seed random number generator
@@ -875,7 +879,7 @@ int main(int argc, char **argv)
     // Initialize ncurses
     initscr();
 
-    // Give ncurses more control over keypresses
+    // Give ncurses more control over key presses
     keypad(stdscr, TRUE);
 
     // Disable CTRL-C to kill
@@ -889,7 +893,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
-    // Define color pairs
+    // This allows for terminal transparency
     use_default_colors();
     start_color();
     init_pair(1, COLOR_YELLOW, COLOR_BLACK); // Unselected option
