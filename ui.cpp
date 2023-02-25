@@ -21,7 +21,7 @@
 #include <random>
 
 int numberOfQuestions{4};
-
+std::minstd_rand myGenerator;
 /*
 This is calculated using
 
@@ -64,7 +64,6 @@ std::vector<signed long int> randomUniqueNumber(signed long int start, signed lo
     std::vector<signed long int> thingToReturn;
     while (thingToReturn.size() != numberOfEntries)
     {
-        std::minstd_rand myGenerator;
         myGenerator.seed(std::time(nullptr));
         while (1)
         {
@@ -259,10 +258,8 @@ namespace multiChoice
         char run{1};
         while (run)
         {
-            // Generate 4 unique random numbers between 0 and 4
             std::vector<signed long int> randomWordIndexes = randomUniqueNumber(0, masterKey->size() - 1, questions);
-            // Pick a random number between 0 and 4
-            int myInt = std::rand() % randomWordIndexes.size();
+            int myInt = myGenerator() % randomWordIndexes.size();
             debug::emptyInts[1] = myInt;
 
             std::wstring title = L"Please translate the following: " + masterKey->at(randomWordIndexes.at(myInt)).english;
@@ -448,9 +445,9 @@ namespace conjucation
             char drawing{1};
             char writeOnAllLines{0};
             int activeIndex{0};
-            int randomInfinitive = std::rand() % key.size();
-            int tense = std::rand() % 3;
-            std::array<std::wstring, 3> names = {L"präsens", L"präteritum", L"futur 1"};
+            int randomInfinitive = myGenerator() % key.size();
+            int tense = myGenerator() % 3;
+            std::array<std::wstring, 3> names = {L"präsens(present)", L"präteritum(simple past)", L"futur 1(future tense)"};
             std::array<std::wstring, 6> *conjucationKey = key.at(randomInfinitive).getTense(tense);
             std::array<std::wstring, 6> inputBuffers;
             while (drawing)
@@ -875,7 +872,7 @@ int main(int argc, char **argv)
         }
     }
     // Seed random number generator
-    std::srand(std::time(0));
+    myGenerator.seed(std::time(0));
     // Needed for essets to be printed correctly
     setlocale(LC_ALL, "");
     std::setlocale(LC_ALL, nullptr);
