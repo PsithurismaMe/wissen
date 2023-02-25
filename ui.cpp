@@ -18,6 +18,7 @@
 #include <string>
 #include <ncurses.h>
 #include <thread>
+#include <random>
 
 int numberOfQuestions{4};
 
@@ -63,9 +64,11 @@ std::vector<signed long int> randomUniqueNumber(signed long int start, signed lo
     std::vector<signed long int> thingToReturn;
     while (thingToReturn.size() != numberOfEntries)
     {
+        std::minstd_rand myGenerator;
+        myGenerator.seed(std::time(nullptr));
         while (1)
         {
-            signed long int i = std::rand() % (1 + end - start) - start;
+            signed long int i = myGenerator() % (1 + end - start) - start;
             bool isUnique{1};
             for (auto k : thingToReturn)
             {
@@ -356,25 +359,25 @@ namespace conjucation
     {
         std::wstring infinitive;
         std::wstring translation;
-        std::array<std::wstring, 6> simplePresentTense;
-        std::array<std::wstring, 6> simplePastTense;
-        std::array<std::wstring, 6> simpleFutureTense;
+        std::array<std::wstring, 6> präsens;
+        std::array<std::wstring, 6> präteritum;
+        std::array<std::wstring, 6> futur_1;
         std::array<std::wstring, 6> *getTense(int tense) // 0 == Present, 1 == Past, 2 == Future
         {
             if (tense == 0)
             {
-                return &simplePresentTense;
+                return &präsens;
             }
             if (tense == 1)
             {
-                return &simplePastTense;
+                return &präteritum;
             }
             if (tense == 2)
             {
-                return &simpleFutureTense;
+                return &futur_1;
             }
             // This should never happen
-            return &simplePresentTense;
+            return &präsens;
         }
     };
     //  read files
@@ -411,24 +414,24 @@ namespace conjucation
                 subject.push_back(verb());
                 subject.at(subject.size() - 1).translation = buffers.at(0);
                 subject.at(subject.size() - 1).infinitive = buffers.at(1);
-                subject.at(subject.size() - 1).simplePresentTense.at(0) = buffers.at(2);
-                subject.at(subject.size() - 1).simplePresentTense.at(1) = buffers.at(3);
-                subject.at(subject.size() - 1).simplePresentTense.at(2) = buffers.at(4);
-                subject.at(subject.size() - 1).simplePresentTense.at(3) = buffers.at(5);
-                subject.at(subject.size() - 1).simplePresentTense.at(4) = buffers.at(6);
-                subject.at(subject.size() - 1).simplePresentTense.at(5) = buffers.at(7);
-                subject.at(subject.size() - 1).simplePastTense.at(0) = buffers.at(8);
-                subject.at(subject.size() - 1).simplePastTense.at(1) = buffers.at(9);
-                subject.at(subject.size() - 1).simplePastTense.at(2) = buffers.at(10);
-                subject.at(subject.size() - 1).simplePastTense.at(3) = buffers.at(11);
-                subject.at(subject.size() - 1).simplePastTense.at(4) = buffers.at(12);
-                subject.at(subject.size() - 1).simplePastTense.at(5) = buffers.at(13);
-                subject.at(subject.size() - 1).simpleFutureTense.at(0) = buffers.at(14);
-                subject.at(subject.size() - 1).simpleFutureTense.at(1) = buffers.at(15);
-                subject.at(subject.size() - 1).simpleFutureTense.at(2) = buffers.at(16);
-                subject.at(subject.size() - 1).simpleFutureTense.at(3) = buffers.at(17);
-                subject.at(subject.size() - 1).simpleFutureTense.at(4) = buffers.at(18);
-                subject.at(subject.size() - 1).simpleFutureTense.at(5) = buffers.at(19);
+                subject.at(subject.size() - 1).präsens.at(0) = buffers.at(2);
+                subject.at(subject.size() - 1).präsens.at(1) = buffers.at(3);
+                subject.at(subject.size() - 1).präsens.at(2) = buffers.at(4);
+                subject.at(subject.size() - 1).präsens.at(3) = buffers.at(5);
+                subject.at(subject.size() - 1).präsens.at(4) = buffers.at(6);
+                subject.at(subject.size() - 1).präsens.at(5) = buffers.at(7);
+                subject.at(subject.size() - 1).präteritum.at(0) = buffers.at(8);
+                subject.at(subject.size() - 1).präteritum.at(1) = buffers.at(9);
+                subject.at(subject.size() - 1).präteritum.at(2) = buffers.at(10);
+                subject.at(subject.size() - 1).präteritum.at(3) = buffers.at(11);
+                subject.at(subject.size() - 1).präteritum.at(4) = buffers.at(12);
+                subject.at(subject.size() - 1).präteritum.at(5) = buffers.at(13);
+                subject.at(subject.size() - 1).futur_1.at(0) = buffers.at(14);
+                subject.at(subject.size() - 1).futur_1.at(1) = buffers.at(15);
+                subject.at(subject.size() - 1).futur_1.at(2) = buffers.at(16);
+                subject.at(subject.size() - 1).futur_1.at(3) = buffers.at(17);
+                subject.at(subject.size() - 1).futur_1.at(4) = buffers.at(18);
+                subject.at(subject.size() - 1).futur_1.at(5) = buffers.at(19);
             }
         }
         file.close();
@@ -447,11 +450,12 @@ namespace conjucation
             int activeIndex{0};
             int randomInfinitive = std::rand() % key.size();
             int tense = std::rand() % 3;
-            std::array<std::string, 3> names = {"present", "past", "future"};
+            std::array<std::wstring, 3> names = {L"präsens", L"präteritum", L"futur 1"};
             std::array<std::wstring, 6> *conjucationKey = key.at(randomInfinitive).getTense(tense);
             std::array<std::wstring, 6> inputBuffers;
             while (drawing)
             {
+                std::wstring messages = L"\nConjugate in " + names.at(tense) + L" tense";
                 clear();
                 int x;
                 int y;
@@ -460,8 +464,8 @@ namespace conjucation
                 addwstr(key.at(randomInfinitive).infinitive.c_str());
                 printw("\nTranslation: ");
                 addwstr(key.at(randomInfinitive).translation.c_str());
-                printw("\nConjugate in %s tense", names.at(tense).c_str());
-                printw("\nAwnsers cannot contain caps. Press + to access special characters");
+                addwstr(messages.c_str());
+                addwstr(L"\nAwnsers cannot contain caps. Press + to access special characters");
                 if (writeOnAllLines)
                 {
                     attron(COLOR_PAIR(10));
@@ -672,7 +676,7 @@ namespace conjucation
                         addwstr(key.at(randomInfinitive).infinitive.c_str());
                         printw("\nTranslation: ");
                         addwstr(key.at(randomInfinitive).translation.c_str());
-                        printw("\nConjugated in %s tense", names.at(tense).c_str());
+                        addwstr(messages.c_str());
                         printw("\nAwnser key is shown\n");
                         printw("\n\n\n");
                         {
