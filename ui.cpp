@@ -462,7 +462,7 @@ namespace conjucation
                 printw("\nTranslation: ");
                 addwstr(key.at(randomInfinitive).translation.c_str());
                 addwstr(messages.c_str());
-                addwstr(L"\nAwnsers cannot contain caps. Press + to access special characters");
+                addwstr(L"\nAwnsers cannot contain caps. Press + to access special characters.\nIf conjugation is not possible, write \"NA\"");
                 if (writeOnAllLines)
                 {
                     attron(COLOR_PAIR(10));
