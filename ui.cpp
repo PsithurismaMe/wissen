@@ -224,13 +224,7 @@ namespace multiChoice
                 }
                 break;
             }
-            case ('q'):
-            {
-                choice = -2;
-                drawing.join();
-                break;
-            }
-            case ('Q'):
+            case ('`'):
             {
                 choice = -2;
                 drawing.join();
@@ -758,6 +752,54 @@ namespace sentenceTranslation
 {
 
 }
+
+namespace flashCards
+{
+    void run(std::vector<word> & masterKey)
+    {
+        char isRunning {1};
+        char sideVisible {0};
+        int activeIndex = myGenerator() % masterKey.size();
+        int terminalDimentions[2];
+        curs_set(0);
+        while (isRunning)
+        {
+            clear();
+            getmaxyx(stdscr, terminalDimentions[0], terminalDimentions[1]);
+            move(terminalDimentions[0] / 2, ((terminalDimentions[1] / 2) - (masterKey.at(activeIndex).english.size() / 2)));
+            attron(COLOR_PAIR(5));
+            if (sideVisible)
+            {
+                addwstr(masterKey.at(activeIndex).german.c_str());
+            }
+            else
+            {
+                addwstr(masterKey.at(activeIndex).english.c_str());
+            }
+            attroff(COLOR_PAIR(5));
+            refresh();
+            int response = getch();
+            switch (response)
+            {
+            case (' '):
+                sideVisible = !sideVisible;
+                break;
+            
+            case ('\n'):
+                activeIndex = myGenerator() % masterKey.size();
+                sideVisible = 0;
+                break;
+            case ('`'):
+                isRunning = 0;
+                curs_set(1);
+                break;
+            default:
+                break;
+            }
+
+        }
+    }
+}
 namespace titleScreen
 {
     int pos{0};
@@ -765,12 +807,13 @@ namespace titleScreen
     void start()
     {
         std::array<std::string, 2> title;
-        std::array<std::string, 3> choices;
-        title[0] = "german";
+        std::array<std::string, 4> choices;
+        title[0] = "German";
         title[1] = "Quizzer";
         choices[0] = "Multiple Choice Word Translation";
         choices[1] = "Verb Conjugation";
-        choices[2] = "Exit";
+        choices[2] = "Flash Cards";
+        choices[3] = "Exit";
         std::string license = "Wissen is licensed under the GPL-v3. See LICENSE file for more details.";
 
         while (!quitProgram)
@@ -839,6 +882,13 @@ namespace titleScreen
                 }
                 break;
                 case (2):
+                {
+                    std::vector<word> masterKey;
+                    multiChoice::readMasterKey(masterKey);
+                    flashCards::run(masterKey);
+                }
+                break;
+                case (3):
                 {
                     quitProgram = 1;
                 }
