@@ -30,7 +30,7 @@ This is calculated using
 Where:
     x = monitor refresh rate in hertz
 */
-size_t refreshRate{16666}; 
+size_t refreshRate{16666};
 
 // Needed to getline wchar_t correctly
 std::wstring widen(const std::string &utf8_string)
@@ -56,7 +56,6 @@ struct word
         english = _e;
     }
 };
-
 
 // A function which returns a vector of unique numbers. End number is not included.
 std::vector<signed long int> randomUniqueNumber(signed long int start, signed long int end, size_t numberOfEntries)
@@ -133,7 +132,26 @@ namespace multiChoice
                 mvprintw(maY - 3, 0, "Index of last entry: %d", debug::emptyInts[0]);
             }
             mvprintw(maY - 4, 0, "Answer to previous question: ");
-            addwstr((*contents)[awnserCache].german.c_str());
+            // This highlights words different colors depending on the gender of the noun
+            if ((*contents)[awnserCache].german[2] == L'r' && (*contents)[awnserCache].german[0] == L'd')
+            {
+                attron(COLOR_PAIR(12));
+                addwstr((*contents)[awnserCache].german.c_str());
+                attroff(COLOR_PAIR(12));
+            }
+            else if ((*contents)[awnserCache].german[2] == L'e' && (*contents)[awnserCache].german[0] == L'd')
+            {
+                attron(COLOR_PAIR(13));
+                addwstr((*contents)[awnserCache].german.c_str());
+                attroff(COLOR_PAIR(13));
+            }
+            else
+            {
+                attron(COLOR_PAIR(3));
+                addwstr((*contents)[awnserCache].german.c_str());
+                attroff(COLOR_PAIR(3));
+            }
+
             if (timeStamps.size() != 0)
             {
                 mvprintw(maY - 3, 0, "Duration of last translation: %s sec", std::to_string(timeStamps[((timeStampIterator - 1) % 20)].count()).c_str());
@@ -755,10 +773,10 @@ namespace sentenceTranslation
 
 namespace flashCards
 {
-    void run(std::vector<word> & masterKey)
+    void run(std::vector<word> &masterKey)
     {
-        char isRunning {1};
-        char sideVisible {0};
+        char isRunning{1};
+        char sideVisible{0};
         int activeIndex = myGenerator() % masterKey.size();
         int terminalDimentions[2];
         curs_set(0);
@@ -784,7 +802,7 @@ namespace flashCards
             case (' '):
                 sideVisible = !sideVisible;
                 break;
-            
+
             case ('\n'):
                 activeIndex = myGenerator() % masterKey.size();
                 sideVisible = 0;
@@ -796,7 +814,6 @@ namespace flashCards
             default:
                 break;
             }
-
         }
     }
 }
