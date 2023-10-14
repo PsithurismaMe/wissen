@@ -10,7 +10,8 @@
                 "${file}",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
-                "-lncursesw"
+                "-lncursesw",
+                "-O3"
             ],
             "options": {
                 "cwd": "${fileDirname}"

@@ -89,18 +89,17 @@ std::vector<signed long int> randomUniqueNumber(signed long int start, signed lo
 namespace multiChoice
 {
 
-    int awnserCache{0};
+    int answerCache{0};
     float accuracyCache1{1.00};
     float accuracyCache2{1.00};
     // timestamps
     std::array<std::chrono::duration<float>, 20> timeStamps;
     std::uint64_t timeStampIterator = 0;
-    // The draw function draws all things on screen. This should only be called when constructing a std::thread
-    void draw(int *living, std::wstring title, std::vector<signed long int> *randoms, int *highlighedIndex, std::vector<word> *contents, int maY, int maX, int *correct, int *total, std::chrono::_V2::steady_clock::time_point *start)
+    void draw(int *living, std::wstring title, std::vector<signed long int> *randoms, int highlightedIndex, std::vector<word> *contents, int maY, int maX, int *correct, int *total, std::chrono::_V2::steady_clock::time_point *start)
     {
         // Set this to 1 to show debug info on questionnaire
         int debugMode{0};
-        while (*living == -1)
+        //while (*living == -1)
         {
             clear();
             attron(COLOR_PAIR(2));
@@ -109,7 +108,7 @@ namespace multiChoice
             printw("\n\n\t");
             for (int i = 0; i < randoms->size(); i++)
             {
-                if (*highlighedIndex == i)
+                if (highlightedIndex == i)
                 {
                     attron(COLOR_PAIR(13));
                     addwstr((*contents)[(*randoms)[i]].german.c_str());
@@ -133,22 +132,22 @@ namespace multiChoice
             }
             mvprintw(maY - 4, 0, "Answer to previous question: ");
             // This highlights words different colors depending on the gender of the noun
-            if ((*contents)[awnserCache].german[2] == L'r' && (*contents)[awnserCache].german[0] == L'd')
+            if ((*contents)[answerCache].german[2] == L'r' && (*contents)[answerCache].german[0] == L'd')
             {
                 attron(COLOR_PAIR(12));
-                addwstr((*contents)[awnserCache].german.c_str());
+                addwstr((*contents)[answerCache].german.c_str());
                 attroff(COLOR_PAIR(12));
             }
-            else if ((*contents)[awnserCache].german[2] == L'e' && (*contents)[awnserCache].german[0] == L'd')
+            else if ((*contents)[answerCache].german[2] == L'e' && (*contents)[answerCache].german[0] == L'd')
             {
                 attron(COLOR_PAIR(13));
-                addwstr((*contents)[awnserCache].german.c_str());
+                addwstr((*contents)[answerCache].german.c_str());
                 attroff(COLOR_PAIR(13));
             }
             else
             {
                 attron(COLOR_PAIR(3));
-                addwstr((*contents)[awnserCache].german.c_str());
+                addwstr((*contents)[answerCache].german.c_str());
                 attroff(COLOR_PAIR(3));
             }
 
@@ -190,8 +189,6 @@ namespace multiChoice
             }
 
             refresh();
-            // set frame times here
-            std::this_thread::sleep_for(std::chrono::microseconds(refreshRate));
         }
     }
 
@@ -206,52 +203,48 @@ namespace multiChoice
         int maY;
         getmaxyx(stdscr, maY, maX);
         int choice{-1};
-        int highlighedIndex{0};
+        int highlightedIndex{0};
         // Record starting time
         std::chrono::_V2::steady_clock::time_point start = std::chrono::steady_clock::now();
-
-        // start drawing thread
-        std::thread drawing(multiChoice::draw, &choice, title, randoms, &highlighedIndex, contents, maY, maX, correct, total, &start);
         while (choice == -1)
         {
             // Wait for user to press a key
+            multiChoice::draw(&choice, title, randoms, highlightedIndex, contents, maY, maX, correct, total, &start);
             int response = getch();
             switch (response)
             {
             case (KEY_UP):
             {
-                if (highlighedIndex > 0)
+                if (highlightedIndex > 0)
                 {
-                    highlighedIndex--;
+                    highlightedIndex--;
                 }
                 else
                 {
-                    highlighedIndex = (randoms->size() - 1);
+                    highlightedIndex = (randoms->size() - 1);
                 }
                 break;
             }
             case (KEY_DOWN):
             {
-                if (highlighedIndex < randoms->size() - 1)
+                if (highlightedIndex < randoms->size() - 1)
                 {
-                    highlighedIndex++;
+                    highlightedIndex++;
                 }
                 else
                 {
-                    highlighedIndex = 0;
+                    highlightedIndex = 0;
                 }
                 break;
             }
             case ('`'):
             {
                 choice = -2;
-                drawing.join();
                 break;
             }
             case ('\n'):
             {
-                choice = highlighedIndex;
-                drawing.join();
+                choice = highlightedIndex;
                 timeStamps.at(timeStampIterator % 20) = ((std::chrono::steady_clock::now() - start)); // Appears to break user input
                 timeStampIterator++;
                 break;
@@ -276,16 +269,16 @@ namespace multiChoice
 
             std::wstring title = L"Please translate the following: " + masterKey->at(randomWordIndexes.at(myInt)).english;
             // Start questionnaire and record Answer
-            int userAwnser = multiChoice::individualWordTranslationMultipleChoice(masterKey, &randomWordIndexes, title, &correct, &total);
+            int userAnswer = multiChoice::individualWordTranslationMultipleChoice(masterKey, &randomWordIndexes, title, &correct, &total);
             accuracyCache1 = 100 * ((float)correct / (float)total);
-            debug::emptyInts[0] = userAwnser;
-            awnserCache = randomWordIndexes[myInt];
+            debug::emptyInts[0] = userAnswer;
+            answerCache = randomWordIndexes[myInt];
             // Check if Answer is correct
-            if (userAwnser == myInt)
+            if (userAnswer == myInt)
             {
                 correct++;
             }
-            else if (userAwnser == -2)
+            else if (userAnswer == -2)
             {
                 run = 0;
             }
@@ -336,7 +329,7 @@ namespace multiChoice
 
 }
 
-namespace conjucation
+namespace conjugation
 {
     wchar_t *convertToWideStr(wchar_t letter)
     {
@@ -893,9 +886,9 @@ namespace titleScreen
                 break;
                 case (1):
                 {
-                    std::vector<conjucation::verb> verbs;
-                    conjucation::readData(verbs);
-                    conjucation::start(verbs);
+                    std::vector<conjugation::verb> verbs;
+                    conjugation::readData(verbs);
+                    conjugation::start(verbs);
                 }
                 break;
                 case (2):
@@ -939,8 +932,8 @@ int main(int argc, char **argv)
         }
     }
     // Seed random number generator
-    myGenerator.seed(std::time(0));
-    // Needed for essets to be printed correctly
+    myGenerator.seed(std::time(nullptr));
+    // Needed for ß to be printed correctly
     setlocale(LC_ALL, "");
     std::setlocale(LC_ALL, nullptr);
 
