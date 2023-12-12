@@ -361,10 +361,10 @@ namespace conjugation
     {
         std::wstring infinitive;
         std::wstring translation;
-        std::array<std::wstring, 6> präsens;
-        std::array<std::wstring, 6> präteritum;
-        std::array<std::wstring, 6> futur_1;
-        std::array<std::wstring, 6> *getTense(int tense) // 0 == Present, 1 == Past, 2 == Future
+        std::vector<std::wstring> präsens{6};
+        std::vector<std::wstring> präteritum{6};
+        std::vector<std::wstring> futur_1{1};
+        std::vector<std::wstring> *getTense(int tense) // 0 == Present, 1 == Past, 2 == Future
         {
             if (tense == 0)
             {
@@ -403,7 +403,7 @@ namespace conjugation
             std::wstring wideEntireLineContents = widen(entireLineContents);
             size_t i{1};
             {
-                std::array<std::wstring, 20> buffers;
+                std::array<std::wstring, 15> buffers;
                 for (int x = 0; x < buffers.size(); x++)
                 {
                     while (wideEntireLineContents.at(i) != L'"')
@@ -429,11 +429,6 @@ namespace conjugation
                 subject.at(subject.size() - 1).präteritum.at(4) = buffers.at(12);
                 subject.at(subject.size() - 1).präteritum.at(5) = buffers.at(13);
                 subject.at(subject.size() - 1).futur_1.at(0) = buffers.at(14);
-                subject.at(subject.size() - 1).futur_1.at(1) = buffers.at(15);
-                subject.at(subject.size() - 1).futur_1.at(2) = buffers.at(16);
-                subject.at(subject.size() - 1).futur_1.at(3) = buffers.at(17);
-                subject.at(subject.size() - 1).futur_1.at(4) = buffers.at(18);
-                subject.at(subject.size() - 1).futur_1.at(5) = buffers.at(19);
             }
         }
         file.close();
@@ -453,7 +448,7 @@ namespace conjugation
             int randomInfinitive = myGenerator() % key.size();
             int tense = myGenerator() % 3;
             std::array<std::wstring, 3> names = {L"präsens(present)", L"präteritum(simple past)", L"futur 1(future tense)"};
-            std::array<std::wstring, 6> *conjucationKey = key.at(randomInfinitive).getTense(tense);
+            std::vector<std::wstring> *conjucationKey = key.at(randomInfinitive).getTense(tense);
             std::array<std::wstring, 6> inputBuffers;
             while (drawing)
             {
